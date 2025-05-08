@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: { turbo: true },
+  distDir: '.next',
 };
 
 export default nextConfig;
