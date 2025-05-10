@@ -1,47 +1,52 @@
 'use client';
 
-import Link from 'next/link';
-import { Edit, Menu } from 'lucide-react';
+import type React from 'react';
+import { ChevronDown, PenSquare } from 'lucide-react';
+import { Avatar, AvatarFallback } from '@shared/components/avatar';
+import { Button } from '@shared/components/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@shared/components/dropdown-menu';
 
 interface HeaderProps {
-  onMenuClick: () => void;
+  sidebarTrigger: React.ReactNode;
 }
 
-export function Header({ onMenuClick }: HeaderProps) {
+export const Header = ({ sidebarTrigger }: HeaderProps) => {
   return (
-    <header className='flex items-center justify-between border-b p-4'>
-      <div className='flex items-center'>
-        <button onClick={onMenuClick} className='mr-3 p-1 lg:hidden'>
-          <Menu className='h-6 w-6' />
-        </button>
-        <Link href='/' className='flex items-center'>
-          <span className='mr-1 text-red-500'>•</span>
-          <span className='text-lg font-bold'>Run to the Father</span>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            width='24'
-            height='24'
-            viewBox='0 0 24 24'
-            fill='none'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            className='ml-1 h-4 w-4'
-          >
-            <path d='m6 9 6 6 6-6' />
-          </svg>
-        </Link>
-      </div>
-
+    <header className='fixed left-0 top-0 z-30 flex h-14 w-full items-center justify-between border-b bg-white px-3 py-2'>
       <div className='flex items-center gap-2'>
-        <button className='p-1'>
-          <Edit className='h-6 w-6' />
-        </button>
-        <div className='flex h-8 w-8 items-center justify-center rounded-full bg-purple-700 text-white'>
-          U
+        {sidebarTrigger}
+        <div className='flex items-center gap-1'>
+          <span className='text-lg font-semibold text-red-600'>•</span>
+          <h1 className='text-lg font-semibold'>Run to the Father</h1>
+          <ChevronDown className='h-4 w-4' />
         </div>
+      </div>
+      <div className='flex items-center gap-2'>
+        <Button variant='ghost' size='icon'>
+          <PenSquare className='h-5 w-5' />
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant='ghost' size='icon' className='rounded-full'>
+              <Avatar className='h-8 w-8'>
+                <AvatarFallback className='bg-purple-600 text-white'>
+                  {}
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align='end'>
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
-}
+};

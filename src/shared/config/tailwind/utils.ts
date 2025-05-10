@@ -1,23 +1,22 @@
-import { type ClassValue, clsx } from "clsx";
-import { extendTailwindMerge } from "tailwind-merge";
-
-import { pxrSpacingPositive, pxrSpacingWithNegative } from "./tailwind-utils";
+import { type ClassValue, clsx } from 'clsx';
+import { extendTailwindMerge } from 'tailwind-merge';
+import { pxrSpacingPositive, pxrSpacingWithNegative } from './tailwind-utils';
 
 export const customTwMerge = extendTailwindMerge({
   extend: {
     classGroups: {
-      "font-size": [
+      'font-size': [
         { text: Object.keys(pxrSpacingPositive(200)) },
-        { text: ["xxl", "xl", "l", "m", "s", "xs", "xxs"] },
+        { text: ['xxl', 'xl', 'l', 'm', 's', 'xs', 'xxs'] },
       ],
-      "font-weight": [{ font: ["400", "500", "700"] }],
-      leading: [{ leading: ["tight", "snug", "normal", "relaxed", "loose"] }],
+      'font-weight': [{ font: ['400', '500', '700'] }],
+      leading: [{ leading: ['tight', 'snug', 'normal', 'relaxed', 'loose'] }],
       w: [{ w: Object.keys(pxrSpacingPositive(1600)) }],
       h: [{ h: Object.keys(pxrSpacingPositive(1600)) }],
-      "max-w": [{ "max-w": Object.keys(pxrSpacingPositive(1600)) }],
-      "max-h": [{ "max-h": Object.keys(pxrSpacingPositive(1600)) }],
-      "min-w": [{ "min-w": Object.keys(pxrSpacingPositive(1600)) }],
-      "min-h": [{ "min-h": Object.keys(pxrSpacingPositive(1600)) }],
+      'max-w': [{ 'max-w': Object.keys(pxrSpacingPositive(1600)) }],
+      'max-h': [{ 'max-h': Object.keys(pxrSpacingPositive(1600)) }],
+      'min-w': [{ 'min-w': Object.keys(pxrSpacingPositive(1600)) }],
+      'min-h': [{ 'min-h': Object.keys(pxrSpacingPositive(1600)) }],
       gap: [{ gap: Object.keys(pxrSpacingWithNegative(-100, 100)) }],
       m: [{ m: Object.keys(pxrSpacingWithNegative(-200, 200)) }],
       mx: [{ mx: Object.keys(pxrSpacingWithNegative(-200, 200)) }],
@@ -34,7 +33,7 @@ export const customTwMerge = extendTailwindMerge({
       pb: [{ pb: Object.keys(pxrSpacingWithNegative(-200, 200)) }],
       pl: [{ pl: Object.keys(pxrSpacingWithNegative(-200, 200)) }],
       inset: [{ inset: Object.keys(pxrSpacingPositive(100)) }],
-      "border-w": [{ "border-width": Object.keys(pxrSpacingPositive(10)) }],
+      'border-w': [{ 'border-width': Object.keys(pxrSpacingPositive(10)) }],
       rounded: [{ rounded: Object.keys(pxrSpacingPositive(100)) }],
       // position 관련 확장
       top: [{ top: Object.keys(pxrSpacingPositive(100)) }],
@@ -43,11 +42,9 @@ export const customTwMerge = extendTailwindMerge({
       left: [{ left: Object.keys(pxrSpacingPositive(100)) }],
     },
     conflictingClassGroups: {
-      "font-size": ["font-weight", "leading"],
-      "font-weight": ["font-size", "leading"],
-      leading: ["font-size", "font-weight"],
+      'font-size': ['font-weight', 'leading'],
+      'font-weight': ['font-size', 'leading'],
+      leading: ['font-size', 'font-weight'],
     },
   },
 });
-
-

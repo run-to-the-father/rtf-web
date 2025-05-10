@@ -1,30 +1,30 @@
-import type { Metadata } from "next";
-import { Urbanist } from "@/shared/config/fonts";
-import { cn } from "@/shared/lib/utils";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { ThemeProvider } from '@application/provider/theme-provider';
+import { Urbanist } from '@shared/config/fonts';
+import './globals.css';
 
 const baseUrl =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://runtothefather.com";
+  process.env.NEXT_PUBLIC_BASE_URL || 'https://runtothefather.com';
 
 export const metadata: Metadata = {
-  title: "Run to the Father - 성경적 가치 기반 AI 챗봇",
+  title: 'Run to the Father - 성경적 가치 기반 AI 챗봇',
   description:
-    "Run to the Father는 성경적 가치와 지혜를 바탕으로 신앙적 조언과 도움을 제공하는 크리스천 AI 챗봇 서비스입니다.",
+    'Run to the Father는 성경적 가치와 지혜를 바탕으로 신앙적 조언과 도움을 제공하는 크리스천 AI 챗봇 서비스입니다.',
   openGraph: {
-    title: "Run to the Father - 성경적 가치 기반 AI 챗봇",
+    title: 'Run to the Father - 성경적 가치 기반 AI 챗봇',
     description:
-      "성경적 가치와 지혜를 바탕으로 신앙적 조언과 도움을 제공하는 크리스천 AI 챗봇 서비스",
+      '성경적 가치와 지혜를 바탕으로 신앙적 조언과 도움을 제공하는 크리스천 AI 챗봇 서비스',
     url: baseUrl,
-    siteName: "Run to the Father",
-    locale: "ko-KR",
+    siteName: 'Run to the Father',
+    locale: 'ko-KR',
     images: [`${baseUrl}/assets/og-image.png`],
-    type: "website",
+    type: 'website',
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Run to the Father - 성경적 가치 기반 AI 챗봇",
+    card: 'summary_large_image',
+    title: 'Run to the Father - 성경적 가치 기반 AI 챗봇',
     description:
-      "성경적 가치와 지혜를 바탕으로 신앙적 조언과 도움을 제공하는 크리스천 AI 챗봇 서비스",
+      '성경적 가치와 지혜를 바탕으로 신앙적 조언과 도움을 제공하는 크리스천 AI 챗봇 서비스',
     images: [`${baseUrl}/assets/og-image.png`],
   },
   verification: {
@@ -41,8 +41,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
-      <body className={cn(Urbanist.className, "antialiased")}>{children}</body>
+    <html lang='ko' className='light' suppressHydrationWarning>
+      <body className={Urbanist.className}>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='light'
+          enableSystem={false}
+          disableTransitionOnChange
+          storageKey='rtf-theme'
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

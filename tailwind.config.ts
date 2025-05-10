@@ -1,14 +1,11 @@
 import { Config } from 'tailwindcss';
-import tailwindcssAnimate from 'tailwindcss-animate';
 import plugin from 'tailwindcss/plugin';
+import { SCREEN_SIZES } from './src/shared/config/tailwind/screen';
 import {
   addWidth,
   pxrSpacingPositive,
   pxrSpacingWithNegative,
 } from './src/shared/config/tailwind/tailwind-utils';
-import { SCREEN_SIZES } from './src/shared/config/tailwind/screen';
-
-
 
 const scrollbarGutterPlugin = plugin(({ addUtilities }) => {
   addUtilities({
@@ -22,14 +19,11 @@ const scrollbarGutterPlugin = plugin(({ addUtilities }) => {
 });
 
 const config = {
-  darkMode: ['class', '[data-mode="dark"]'],
+  darkMode: ['class'],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-    './stories/**/*.{js,ts,jsx,tsx,mdx}',
-    '../../packages/ui/src/**/*.{ts,tsx}',
+    './app/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+    './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -81,6 +75,14 @@ const config = {
         from: { height: 'var(--radix-accordion-content-height)' },
         to: { height: '0' },
       },
+      'slide-in-left': {
+        '0%': { transform: 'translateX(-100%)', opacity: '0' },
+        '100%': { transform: 'translateX(0)', opacity: '1' },
+      },
+      'slide-out-left': {
+        '0%': { transform: 'translateX(0)', opacity: '1' },
+        '100%': { transform: 'translateX(-100%)', opacity: '0' },
+      },
     },
     animation: {
       shimmer: 'shimmer 1.4s infinite ease',
@@ -88,9 +90,11 @@ const config = {
       spin: 'spin 1s linear infinite',
       'accordion-down': 'accordion-down 0.3s ease-out',
       'accordion-up': 'accordion-up 0.3s ease-out',
+      'slide-in-left': 'slide-in-left 0.3s ease-out forwards',
+      'slide-out-left': 'slide-out-left 0.3s ease-in forwards',
     },
   },
-  plugins: [tailwindcssAnimate,  scrollbarGutterPlugin],
+  plugins: [require('tailwindcss-animate'), scrollbarGutterPlugin],
 } satisfies Config;
 
 export default config;

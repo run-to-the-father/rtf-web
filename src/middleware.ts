@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   // 현재는 아무 작업도 수행하지 않지만, 미래에 필요한 미들웨어 로직을 여기에 추가할 수 있습니다.

@@ -1,89 +1,136 @@
-import { Edit, Plus, Search, Trash } from 'lucide-react';
-import { cn } from '@shared/lib/utils';
+'use client';
 
-interface SidebarProps {
-  className?: string;
-}
+import { Edit, PenSquare, Search, Trash2 } from 'lucide-react';
+import { Button } from '@shared/components/button';
+import { Input } from '@shared/components/input';
 
-export function Sidebar({ className }: SidebarProps) {
-  return (
-    <aside className={cn('flex flex-col bg-white', className)}>
-      <div className='p-4'>
-        <div className='relative'>
-          <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500' />
-          <input
-            type='text'
-            placeholder='Search...'
-            className='w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500'
-          />
-        </div>
-      </div>
-
-      <button className='mx-4 flex items-center gap-2 rounded-md border border-gray-300 p-2 text-sm hover:bg-gray-100'>
-        <Plus className='h-4 w-4' />
-        Create New Chat
-      </button>
-
-      <div className='mt-4 flex-1 overflow-auto'>
-        <div className='px-4 py-2'>
-          <h3 className='mb-2 text-xs font-medium text-gray-500'>Today</h3>
-          <ConversationItem title='New conversation' isActive />
-          <ConversationItem title='이게 뭐냐 갑자기 일어난 container문제' />
-          <ConversationItem title='FE 247 px * 20 px 이게 최대 크기인가요?' />
-        </div>
-
-        <div className='px-4 py-2'>
-          <h3 className='mb-2 text-xs font-medium text-gray-500'>Yesterday</h3>
-          <ConversationItem title='FE 247 px * 20 px 이게 최대 크기인가요?' />
-          <ConversationItem title='일본 관광상품 추가 정보 필요' />
-        </div>
-
-        <div className='px-4 py-2'>
-          <h3 className='mb-2 text-xs font-medium text-gray-500'>
-            Previous 7 Days
-          </h3>
-          <ConversationItem title='일본 관광상품 추가 정보 필요' />
-          <ConversationItem title='일본 관광상품 추가 정보 필요' />
-          <ConversationItem title='일본 관광상품 추가 정보 필요' />
-        </div>
-
-        <div className='px-4 py-2'>
-          <h3 className='mb-2 text-xs font-medium text-gray-500'>
-            Previous 30 Days
-          </h3>
-          <ConversationItem title='일본 관광상품 추가 정보 필요' />
-          <ConversationItem title='일본 관광상품 추가 정보 필요' />
-          <ConversationItem title='일본 관광상품 추가 정보 필요' />
-          <ConversationItem title='일본 관광상품 추가 정보 필요' />
-          <ConversationItem title='일본 관광상품 추가 정보 필요' />
-        </div>
-      </div>
-    </aside>
-  );
-}
-
-interface ConversationItemProps {
+interface ChatItem {
+  id: string;
   title: string;
   isActive?: boolean;
+  date: string;
 }
 
-function ConversationItem({ title, isActive }: ConversationItemProps) {
-  return (
-    <div
-      className={cn(
-        'mb-1 flex items-center justify-between rounded-md p-2',
-        isActive ? 'bg-gray-100' : 'hover:bg-gray-100',
-      )}
-    >
-      <span className='truncate text-sm'>{title}</span>
-      <div className='flex items-center gap-1'>
-        <button className='p-1 text-gray-500 hover:text-gray-700'>
-          <Edit className='h-4 w-4' />
-        </button>
-        <button className='p-1 text-gray-500 hover:text-gray-700'>
-          <Trash className='h-4 w-4' />
-        </button>
-      </div>
-    </div>
-  );
+interface ChatGroup {
+  title: string;
+  items: ChatItem[];
 }
+
+// 샘플 데이터
+const chatGroups: ChatGroup[] = [
+  {
+    title: 'Today',
+    items: [
+      { id: '1', title: 'New conversation', isActive: true, date: 'Today' },
+      {
+        id: '2',
+        title: '이게 최대 글자수 입니다 Fill container로',
+        date: 'Today',
+      },
+      {
+        id: '3',
+        title: 'Fill 247 px * 20 px 아래 최대 글자수입니다',
+        date: 'Today',
+      },
+    ],
+  },
+  {
+    title: 'Yesterday',
+    items: [
+      {
+        id: '4',
+        title: 'Fill 247 px * 20 px 아래 최대 글자수입니다',
+        date: 'Yesterday',
+      },
+      { id: '5', title: '질문 완전상세 추가 정보 필요', date: 'Yesterday' },
+    ],
+  },
+  {
+    title: 'Previous 7 Days',
+    items: [
+      { id: '6', title: '질문 완전상세 추가 정보 필요', date: '3 days ago' },
+      { id: '7', title: '질문 완전상세 추가 정보 필요', date: '4 days ago' },
+      { id: '8', title: '질문 완전상세 추가 정보 필요', date: '5 days ago' },
+    ],
+  },
+  {
+    title: 'Previous 30 Days',
+    items: [
+      { id: '9', title: '질문 완전상세 추가 정보 필요', date: '10 days ago' },
+      { id: '10', title: '질문 완전상세 추가 정보 필요', date: '15 days ago' },
+      { id: '11', title: '질문 완전상세 추가 정보 필요', date: '20 days ago' },
+      { id: '12', title: '질문 완전상세 추가 정보 필요', date: '25 days ago' },
+      { id: '13', title: '질문 완전상세 추가 정보 필요', date: '30 days ago' },
+    ],
+  },
+];
+
+export const Sidebar = () => {
+  return (
+    <nav className='flex h-full w-full flex-col bg-white'>
+      {/* 검색 헤더 */}
+      <div className='border-b p-3'>
+        <div className='relative'>
+          <Input
+            type='search'
+            placeholder='Search...'
+            className='h-9 w-full pl-8'
+          />
+          <Search
+            className='text-muted-foreground absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2'
+            aria-hidden='true'
+          />
+        </div>
+        <Button
+          className='mt-2 flex w-full items-center justify-start gap-2'
+          variant='ghost'
+        >
+          <PenSquare className='h-4 w-4' />
+          <span>Create New Chat</span>
+        </Button>
+      </div>
+
+      {/* 대화 목록 */}
+      <div className='flex-1 overflow-y-auto p-1'>
+        {chatGroups.map((group) => (
+          <div key={group.title} className='mb-2'>
+            <h3 className='rounded-md bg-gray-50 px-3 py-2 text-xs font-medium text-gray-500'>
+              {group.title}
+            </h3>
+            <ul className='mt-1'>
+              {group.items.map((item) => (
+                <li key={item.id} className='group relative'>
+                  <button
+                    className={`flex w-full items-center rounded-md px-3 py-2 text-xs ${
+                      item.isActive
+                        ? 'bg-gray-100 font-medium text-gray-900'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className='truncate'>{item.title}</span>
+                  </button>
+                  <div className='absolute right-2 top-1/2 flex -translate-y-1/2 opacity-0 group-hover:opacity-100'>
+                    <button
+                      className='rounded-md p-1 hover:bg-gray-200'
+                      title='수정'
+                      aria-label='대화 제목 편집하기'
+                    >
+                      <Edit className='h-4 w-4 text-gray-500' />
+                    </button>
+                    <button
+                      className='rounded-md p-1 hover:bg-gray-200'
+                      title='삭제'
+                      aria-label='대화 삭제하기'
+                    >
+                      <Trash2 className='h-4 w-4 text-gray-500' />
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </nav>
+  );
+};
