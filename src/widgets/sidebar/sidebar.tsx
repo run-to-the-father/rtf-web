@@ -1,8 +1,8 @@
 'use client';
 
 import { Edit, PenSquare, Search, Trash2 } from 'lucide-react';
-import { Button } from '@shared/components/button';
-import { Input } from '@shared/components/input';
+import { Button } from '@/shared/ui/button';
+import { Input } from '@/shared/ui/input';
 
 interface ChatItem {
   id: string;

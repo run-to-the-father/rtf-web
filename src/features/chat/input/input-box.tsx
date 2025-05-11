@@ -3,15 +3,15 @@
 import type React from 'react';
 import { useState } from 'react';
 import { ArrowUp, ChevronDown } from 'lucide-react';
-import { useChatStore } from '@entities/chat/model/store';
-import { Button } from '@shared/components/button';
+import { useChatStore } from '@/entities/chat/models/store';
+import { Button } from '@/shared/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@shared/components/dropdown-menu';
-import { Textarea } from '@shared/components/textarea';
+} from '@/shared/ui/dropdown-menu';
+import { Textarea } from '@/shared/ui/textarea';
 
 export const ChatInputBox = () => {
   const [message, setMessage] = useState('');
