@@ -1,8 +1,8 @@
 'use client';
 
 import { BookOpenText, Gift } from 'lucide-react';
-import { type ChatMode, useChatStore } from '@entities/chat/model/store';
-import { Card, CardContent } from '@shared/components/card';
+import { type ChatMode, useChatStore } from '@/entities/chat/models/store';
+import { Card, CardContent } from '@/shared/ui/card';
 import { cn } from '@shared/lib/utils';
 
 export const ChatModeSelect = () => {

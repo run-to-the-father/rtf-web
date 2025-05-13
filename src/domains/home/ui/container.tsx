@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { Menu } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
+import { Button } from '@/shared/ui/button';
+import { Drawer, DrawerContent, DrawerHeader } from '@/shared/ui/drawer';
 import { ChatInputBox } from '@features/chat/input/input-box';
 import { ChatModeSelect } from '@features/chat/mode-select/mode-select';
-import { Button } from '@shared/components/button';
 import { ScriptureFooter } from '@widgets/footer/scripture-footer';
 import { Header } from '@widgets/header/header';
 import { Sidebar } from '@widgets/sidebar/sidebar';
@@ -33,7 +34,7 @@ export function HomeContainer() {
       variant='ghost'
       size='icon'
       onClick={toggleSidebar}
-      aria-label='사이드바 메뉴 열기'
+      aria-label='Open Sidebar'
       aria-expanded={sidebarOpen}
     >
       <Menu className='h-5 w-5' />
@@ -45,33 +46,25 @@ export function HomeContainer() {
       {/* 헤더 */}
       <Header sidebarTrigger={sidebarTrigger} />
 
-      {/* 모바일 오버레이 */}
-      {sidebarOpen && isMobile && (
-        <div
-          className='fixed inset-0 z-10 bg-black/50 transition-opacity'
-          onClick={toggleSidebar}
-          aria-hidden='true'
-        />
-      )}
-
       <div className='relative flex flex-1 pt-[56px]'>
-        {/* 모바일용 사이드바 (오버레이 형태) */}
+        {/* 모바일용 사이드바 (Drawer 형태) */}
         {isMobile && (
-          <aside
-            className={cn(
-              'fixed left-0 top-56pxr z-20 h-[calc(100vh-56px)] w-280pxr -translate-x-full border-r bg-white',
-              'transition-all duration-300 ease-in-out',
-              !isInitialRender && sidebarOpen
-                ? 'animate-slide-in-left translate-x-0'
-                : !isInitialRender && !sidebarOpen
-                  ? 'animate-slide-out-left -translate-x-full'
-                  : '',
-            )}
+          <Drawer
+            open={sidebarOpen}
+            onOpenChange={setSidebarOpen}
+            direction='left'
           >
-            <div className='h-full w-full'>
-              <Sidebar />
-            </div>
-          </aside>
+            <DrawerHeader />
+
+            <DrawerContent
+              disableOverlay
+              className='mt-56pxr w-280pxr rounded-none border-r bg-white'
+            >
+              <div className='h-full w-full'>
+                <Sidebar />
+              </div>
+            </DrawerContent>
+          </Drawer>
         )}
 
         {/* 데스크탑용 사이드바 (푸시 형태) */}

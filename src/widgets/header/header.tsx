@@ -2,22 +2,23 @@
 
 import type React from 'react';
 import { ChevronDown, PenSquare } from 'lucide-react';
-import { Avatar, AvatarFallback } from '@shared/components/avatar';
-import { Button } from '@shared/components/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@shared/components/dropdown-menu';
+import { Button } from '@/shared/ui/button';
+import { AvatarDropdown } from '@entities/user/ui/avatar-dropdown';
 
 interface HeaderProps {
   sidebarTrigger: React.ReactNode;
 }
 
 export const Header = ({ sidebarTrigger }: HeaderProps) => {
+  // 임시 사용자 데이터 (실제 구현에서는 상태 관리 또는 서버에서 가져옴)
+  const userData = {
+    name: 'Run to the Father',
+    email: 'runtothefather@gmail.com',
+    avatarFallback: 'U',
+  };
+
   return (
-    <header className='fixed left-0 top-0 z-30 flex h-14 w-full items-center justify-between border-b bg-white px-3 py-2'>
+    <header className='fixed left-0 top-0 z-30 flex h-14 w-full items-center justify-between bg-white px-3 py-2'>
       <div className='flex items-center gap-2'>
         {sidebarTrigger}
         <div className='flex items-center gap-1'>
@@ -30,22 +31,7 @@ export const Header = ({ sidebarTrigger }: HeaderProps) => {
         <Button variant='ghost' size='icon'>
           <PenSquare className='h-5 w-5' />
         </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' size='icon' className='rounded-full'>
-              <Avatar className='h-8 w-8'>
-                <AvatarFallback className='bg-purple-600 text-white'>
-                  {}
-                </AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Logout</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <AvatarDropdown userData={userData} />
       </div>
     </header>
   );

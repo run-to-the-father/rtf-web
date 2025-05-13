@@ -1,4 +1,4 @@
-import { createCustomStore } from '@/shared/model/store';
+import { createCustomStore } from '@/shared/models/store/store';
 
 export type ChatMode = 'surrender' | 'bible';
 

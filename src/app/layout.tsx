@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import ModalRoot from '@/shared/ui/modal-root';
 import { ThemeProvider } from '@application/provider/theme-provider';
 import { Urbanist } from '@shared/config/fonts';
 import './globals.css';
@@ -50,6 +51,7 @@ export default function RootLayout({
           disableTransitionOnChange
           storageKey='rtf-theme'
         >
+          <ModalRoot />
           {children}
         </ThemeProvider>
       </body>

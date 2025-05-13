@@ -1,3 +1,3 @@
-export * from './tailwind-utils';
-export * from './utils';
 export * from './screen';
+export * from './tailwind-utils';
+export * from './typography';

@@ -6,6 +6,14 @@ import {
   pxrSpacingPositive,
   pxrSpacingWithNegative,
 } from './src/shared/config/tailwind/tailwind-utils';
+import { TYPOGRAPHY } from './src/shared/config/tailwind/typography';
+
+const tailwindPlugin = plugin(({ addUtilities }) => {
+  addUtilities(TYPOGRAPHY, {
+    respectPrefix: true,
+    respectImportant: true,
+  });
+});
 
 const scrollbarGutterPlugin = plugin(({ addUtilities }) => {
   addUtilities({
@@ -27,6 +35,16 @@ const config = {
   ],
   theme: {
     extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#000000',
+          foreground: '#FFFFFF',
+        },
+        secondary: {
+          DEFAULT: '#E9E9E9',
+          foreground: '#000000',
+        },
+      },
       screens: SCREEN_SIZES,
       spacing: pxrSpacingWithNegative(-100, 100),
       width: addWidth(pxrSpacingPositive(1600)),
@@ -94,7 +112,11 @@ const config = {
       'slide-out-left': 'slide-out-left 0.3s ease-in forwards',
     },
   },
-  plugins: [require('tailwindcss-animate'), scrollbarGutterPlugin],
+  plugins: [
+    require('tailwindcss-animate'),
+    scrollbarGutterPlugin,
+    tailwindPlugin,
+  ],
 } satisfies Config;
 
 export default config;
