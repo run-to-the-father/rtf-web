@@ -2,10 +2,15 @@
 
 import { useState } from 'react';
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
+import { cn } from '@/shared/lib/utils';
 import { Button } from '@/shared/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/shared/ui/input-otp';
 
-export function OTPVerification() {
+interface OTPVerificationProps {
+  onVerifySuccess: () => void;
+}
+
+export function OTPVerification({ onVerifySuccess }: OTPVerificationProps) {
   const [otp, setOtp] = useState('');
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
@@ -16,7 +21,7 @@ export function OTPVerification() {
       // TODO: Supabase를 사용하여 OTP 인증 로직 구현
       console.log('OTP 인증:', { otp });
       // 인증 성공 시 비밀번호 재설정 페이지로 이동
-      // window.location.href = '/password/reset';
+      onVerifySuccess();
     } catch (error) {
       console.error('OTP 인증 오류:', error);
     }
@@ -25,6 +30,22 @@ export function OTPVerification() {
   const handleResendCode = () => {
     // TODO: Supabase를 사용하여 OTP 코드 재전송 로직 구현
     console.log('OTP 코드 재전송:');
+  };
+
+  // 입력 필드 렌더링 함수
+  const renderSlot = (index: number) => {
+    const hasChar = otp.length > index;
+
+    return (
+      <InputOTPSlot
+        key={index}
+        index={index}
+        className={cn(
+          'flex h-14 w-14 items-center justify-center rounded-md border bg-stone-50 text-xl data-[active=true]:ring-0',
+          hasChar && 'border border-black bg-white',
+        )}
+      />
+    );
   };
 
   return (
@@ -37,40 +58,17 @@ export function OTPVerification() {
       </div>
 
       <form onSubmit={handleVerifyOTP} className='space-y-8'>
-        <div className='flex w-full justify-center bg-red-200'>
+        <div className='flex w-full justify-center'>
           <InputOTP
             maxLength={6}
             value={otp}
             onChange={setOtp}
             pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
             inputMode='numeric'
-            containerClassName='flex gap-x-10pxr justify-center'
+            containerClassName='gap-x-10pxr justify-center'
           >
-            <InputOTPGroup>
-              <InputOTPSlot
-                index={0}
-                className='bg-secondary h-14 w-14 text-xl'
-              />
-              <InputOTPSlot
-                index={1}
-                className='bg-secondary h-14 w-14 text-xl'
-              />
-              <InputOTPSlot
-                index={2}
-                className='bg-secondary h-14 w-14 text-xl'
-              />
-              <InputOTPSlot
-                index={3}
-                className='bg-secondary h-14 w-14 text-xl'
-              />
-              <InputOTPSlot
-                index={4}
-                className='bg-secondary h-14 w-14 text-xl'
-              />
-              <InputOTPSlot
-                index={5}
-                className='bg-secondary h-14 w-14 text-xl'
-              />
+            <InputOTPGroup className='gap-x-10pxr'>
+              {[0, 1, 2, 3, 4, 5].map(renderSlot)}
             </InputOTPGroup>
           </InputOTP>
         </div>
@@ -85,7 +83,7 @@ export function OTPVerification() {
 
       <div className='mt-16 text-center'>
         <p className='typo-2xl-500'>
-          Didn't received code?{' '}
+          Didn't receive code?{' '}
           <button
             onClick={handleResendCode}
             type='button'

@@ -44,6 +44,10 @@ const config = {
           DEFAULT: '#E9E9E9',
           foreground: '#000000',
         },
+        stone: {
+          '50': '#F7F8F9', // 매우 밝은 회색
+          '100': '#00000008',
+        },
       },
       screens: SCREEN_SIZES,
       spacing: pxrSpacingWithNegative(-100, 100),
