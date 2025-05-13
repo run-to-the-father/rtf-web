@@ -85,6 +85,10 @@ const config = {
           transform: 'rotate(360deg)',
         },
       },
+      'caret-blink': {
+        '0%,70%,100%': { opacity: '1' },
+        '20%,50%': { opacity: '0' },
+      },
       'accordion-down': {
         from: { height: '0' },
         to: { height: 'var(--radix-accordion-content-height)' },
@@ -109,6 +113,7 @@ const config = {
       'accordion-down': 'accordion-down 0.3s ease-out',
       'accordion-up': 'accordion-up 0.3s ease-out',
       'slide-in-left': 'slide-in-left 0.3s ease-out forwards',
+      'caret-blink': 'caret-blink 1.25s ease-out infinite',
       'slide-out-left': 'slide-out-left 0.3s ease-in forwards',
     },
   },
