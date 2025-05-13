@@ -1,0 +1,100 @@
+'use client';
+
+import { useState } from 'react';
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
+import { Button } from '@/shared/ui/button';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/shared/ui/input-otp';
+
+export function OTPVerification() {
+  const [otp, setOtp] = useState('');
+
+  const handleVerifyOTP = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length !== 6) return;
+
+    try {
+      // TODO: Supabase를 사용하여 OTP 인증 로직 구현
+      console.log('OTP 인증:', { otp });
+      // 인증 성공 시 비밀번호 재설정 페이지로 이동
+      // window.location.href = '/password/reset';
+    } catch (error) {
+      console.error('OTP 인증 오류:', error);
+    }
+  };
+
+  const handleResendCode = () => {
+    // TODO: Supabase를 사용하여 OTP 코드 재전송 로직 구현
+    console.log('OTP 코드 재전송:');
+  };
+
+  return (
+    <div>
+      <div className='mb-8 mt-28pxr'>
+        <h1 className='mb-2 text-3xl font-bold'>OTP Verification</h1>
+        <p className='text-gray-600'>
+          Enter the verification code we just sent on your email address.
+        </p>
+      </div>
+
+      <form onSubmit={handleVerifyOTP} className='space-y-8'>
+        <div className='flex w-full justify-center bg-red-200'>
+          <InputOTP
+            maxLength={6}
+            value={otp}
+            onChange={setOtp}
+            pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+            inputMode='numeric'
+            containerClassName='flex gap-x-10pxr justify-center'
+          >
+            <InputOTPGroup>
+              <InputOTPSlot
+                index={0}
+                className='bg-secondary h-14 w-14 text-xl'
+              />
+              <InputOTPSlot
+                index={1}
+                className='bg-secondary h-14 w-14 text-xl'
+              />
+              <InputOTPSlot
+                index={2}
+                className='bg-secondary h-14 w-14 text-xl'
+              />
+              <InputOTPSlot
+                index={3}
+                className='bg-secondary h-14 w-14 text-xl'
+              />
+              <InputOTPSlot
+                index={4}
+                className='bg-secondary h-14 w-14 text-xl'
+              />
+              <InputOTPSlot
+                index={5}
+                className='bg-secondary h-14 w-14 text-xl'
+              />
+            </InputOTPGroup>
+          </InputOTP>
+        </div>
+
+        <Button
+          type='submit'
+          className='h-14 w-full rounded-8pxr bg-black text-white'
+        >
+          Verify
+        </Button>
+      </form>
+
+      <div className='mt-16 text-center'>
+        <p className='typo-2xl-500'>
+          Didn't received code?{' '}
+          <button
+            onClick={handleResendCode}
+            type='button'
+            className='font-semibold text-black'
+          >
+            Resend
+          </button>
+        </p>
+      </div>
+    </div>
+  );
+}
