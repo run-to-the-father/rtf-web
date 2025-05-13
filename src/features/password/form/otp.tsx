@@ -5,7 +5,11 @@ import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 import { Button } from '@/shared/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/shared/ui/input-otp';
 
-export function OTPVerification() {
+interface OTPVerificationProps {
+  onVerifySuccess: () => void;
+}
+
+export function OTPVerification({ onVerifySuccess }: OTPVerificationProps) {
   const [otp, setOtp] = useState('');
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
@@ -16,7 +20,7 @@ export function OTPVerification() {
       // TODO: Supabase를 사용하여 OTP 인증 로직 구현
       console.log('OTP 인증:', { otp });
       // 인증 성공 시 비밀번호 재설정 페이지로 이동
-      // window.location.href = '/password/reset';
+      onVerifySuccess();
     } catch (error) {
       console.error('OTP 인증 오류:', error);
     }
@@ -78,6 +82,7 @@ export function OTPVerification() {
         <Button
           type='submit'
           className='h-14 w-full rounded-8pxr bg-black text-white'
+          onClick={handleVerifyOTP}
         >
           Verify
         </Button>
