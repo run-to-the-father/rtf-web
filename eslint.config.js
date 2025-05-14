@@ -70,6 +70,23 @@ const nextConfig = [
       'react/react-in-jsx-scope': 'off',
     },
   },
+  // ✨ 요걸 추가해. 안 하면 평생 저 에러 계속 봄
+  {
+    files: [
+      'eslint.config.js',
+      'postcss.config.js',
+      'tailwind.config.js',
+      'next.config.js',
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: null, // ❗ 타입스크립트 프로젝트 컨텍스트 제외
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-var-requires': 'off', // CommonJS 허용
+    },
+  },
 ];
 
 // 🚀 Final Export (CommonJS)

@@ -16,6 +16,7 @@
     "declaration": true,
     "declarationMap": true,
     "moduleDetection": "force",
+    "forceConsistentCasingInFileNames": true,
     "plugins": [{ "name": "next" }],
     "baseUrl": ".",
     "paths": {
