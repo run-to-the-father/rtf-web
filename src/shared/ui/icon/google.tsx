@@ -1,4 +1,5 @@
-export type SVGProps = React.SVGProps<SVGSVGElement>;
+import { SVGProps } from "@/shared/models/types/ui";
+
 
 function GoogleIcon(props: SVGProps) {
   return (
