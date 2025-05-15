@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Check, ChevronDown, CreditCard, X } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
@@ -12,6 +13,11 @@ interface SubscriptionSettingsProps {
 export const SubscriptionSettings = ({ onBack }: SubscriptionSettingsProps) => {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const router = useRouter();
+
+  const handleUpgradePlan = () => {
+    router.push('/upgrade-plan');
+  };
 
   return (
     <div className='space-y-6'>
@@ -19,7 +25,11 @@ export const SubscriptionSettings = ({ onBack }: SubscriptionSettingsProps) => {
         <>
           <div className='flex items-center justify-between'>
             <h3 className='text-lg font-medium'>Pro Plan</h3>
-            <Button variant='outline' className='h-8'>
+            <Button
+              variant='outline'
+              className='h-8'
+              onClick={handleUpgradePlan}
+            >
               View all plans
             </Button>
           </div>

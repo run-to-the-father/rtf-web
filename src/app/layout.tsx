@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cn } from '@/shared/lib/utils';
 import ModalRoot from '@/shared/ui/modal-root';
 import { ThemeProvider } from '@application/provider/theme-provider';
 import { Urbanist } from '@shared/config/fonts';
@@ -43,7 +44,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='ko' className='light' suppressHydrationWarning>
-      <body className={Urbanist.className}>
+      <body
+        className={cn(
+          'min-w-screen h-full min-h-screen w-full',
+          Urbanist.className,
+        )}
+      >
         <ThemeProvider
           attribute='class'
           defaultTheme='light'
