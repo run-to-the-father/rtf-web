@@ -8,11 +8,13 @@ import {
 } from './src/shared/config/tailwind/tailwind-utils';
 import { TYPOGRAPHY } from './src/shared/config/tailwind/typography';
 
-const tailwindPlugin = plugin(({ addUtilities }) => {
-  addUtilities(TYPOGRAPHY, {
-    respectPrefix: true,
-    respectImportant: true,
-  });
+const tailwindPlugin = plugin.withOptions(() => {
+  return function ({ addUtilities }) {
+    addUtilities(TYPOGRAPHY, {
+      respectPrefix: true,
+      respectImportant: true,
+    });
+  };
 });
 
 const scrollbarGutterPlugin = plugin(({ addUtilities }) => {

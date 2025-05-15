@@ -54,7 +54,7 @@ export function HomeContainer() {
             onOpenChange={setSidebarOpen}
             direction='left'
           >
-            <DrawerHeader />
+            <DrawerHeader className='p-0' />
 
             <DrawerContent
               disableOverlay
@@ -84,8 +84,8 @@ export function HomeContainer() {
 
         {/* 메인 콘텐츠 */}
         <main className='flex-1 overflow-auto'>
-          <div className='flex h-full flex-col'>
-            <div className='flex flex-1 items-center justify-center p-4'>
+          <div className='flex h-full flex-col items-center justify-center'>
+            <div className='w-full max-w-[768px] px-4 md:px-6 lg:px-8'>
               <div className='w-full space-y-8'>
                 <ChatModeSelect />
                 <ChatInputBox />

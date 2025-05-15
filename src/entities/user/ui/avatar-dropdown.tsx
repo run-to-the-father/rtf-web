@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { LogOut, PenSquare, Settings } from 'lucide-react';
 import { SettingsDrawer } from '@/features/user/setting-user/settings-drawer';
@@ -24,9 +25,14 @@ interface AvatarDropdownProps {
 
 export const AvatarDropdown = ({ userData }: AvatarDropdownProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const router = useRouter();
 
   const handleOpenChange = (open: boolean) => {
     setIsSettingsOpen(open);
+  };
+
+  const handleUpgradePlan = () => {
+    router.push('/upgrade-plan');
   };
 
   return (
@@ -49,7 +55,10 @@ export const AvatarDropdown = ({ userData }: AvatarDropdownProps) => {
             <Settings className='h-4 w-4' />
             <span>Settings</span>
           </DropdownMenuItem>
-          <DropdownMenuItem className='flex cursor-pointer items-center gap-2'>
+          <DropdownMenuItem
+            className='flex cursor-pointer items-center gap-2'
+            onClick={handleUpgradePlan}
+          >
             <PenSquare className='h-4 w-4' />
             <span>Upgrade Plan</span>
           </DropdownMenuItem>

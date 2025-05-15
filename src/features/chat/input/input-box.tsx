@@ -54,7 +54,7 @@ export const ChatInputBox = () => {
                 <ChevronDown className='ml-1 h-3 w-3' />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
+            <DropdownMenuContent align='end' className='bg-white'>
               <DropdownMenuItem onClick={() => setMode('surrender')}>
                 Surrender
               </DropdownMenuItem>
