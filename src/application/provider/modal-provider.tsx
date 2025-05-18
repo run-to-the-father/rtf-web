@@ -1,8 +1,8 @@
 'use client';
 
 import { Fragment, useEffect } from 'react';
+import { lockBodyScroll, unlockBodyScroll } from '@/shared/lib/utils';
 import { useModalData } from '@/shared/models/store/modal';
-import { lockBodyScroll, unlockBodyScroll } from '@shared/lib/utils';
 
 export default function ModalProvider() {
   const { openedModals } = useModalData();

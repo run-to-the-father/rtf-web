@@ -99,7 +99,7 @@ export const SettingsDrawer = ({
         <DrawerHeader>
           <div className='flex items-center justify-between'>
             <div className='h-5 w-5'></div> {/* 왼쪽 여백 */}
-            <DrawerTitle className='title-l-500 text-black'>
+            <DrawerTitle className='text-black title-l-500'>
               {getTitle()}
             </DrawerTitle>
             <DrawerClose asChild>
