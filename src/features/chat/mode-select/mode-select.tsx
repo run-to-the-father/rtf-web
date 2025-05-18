@@ -2,8 +2,8 @@
 
 import { BookOpenText, Gift } from 'lucide-react';
 import { type ChatMode, useChatStore } from '@/entities/chat/models/store';
+import { cn } from '@/shared/lib/utils';
 import { Card, CardContent } from '@/shared/ui/card';
-import { cn } from '@shared/lib/utils';
 
 export const ChatModeSelect = () => {
   const { mode, setMode } = useChatStore();
@@ -17,7 +17,7 @@ export const ChatModeSelect = () => {
       <Card
         className={cn(
           'hover:shadow-md h-124pxr w-160pxr cursor-pointer rounded-16pxr border py-14pxr transition-all',
-          mode === 'surrender' && 'ring-primary ring-2',
+          mode === 'surrender' && 'ring-2 ring-primary',
         )}
         onClick={() => handleModeSelect('surrender')}
       >
@@ -35,7 +35,7 @@ export const ChatModeSelect = () => {
       <Card
         className={cn(
           'hover:shadow-md h-124pxr w-160pxr cursor-pointer rounded-16pxr border py-14pxr transition-all',
-          mode === 'bible' && 'ring-primary ring-2',
+          mode === 'bible' && 'ring-2 ring-primary',
         )}
         onClick={() => handleModeSelect('bible')}
       >

@@ -35,6 +35,10 @@ export const AvatarDropdown = ({ userData }: AvatarDropdownProps) => {
     router.push('/upgrade-plan');
   };
 
+  const handleSignOut = () => {
+    router.push('/sign-in');
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -62,7 +66,10 @@ export const AvatarDropdown = ({ userData }: AvatarDropdownProps) => {
             <PenSquare className='h-4 w-4' />
             <span>Upgrade Plan</span>
           </DropdownMenuItem>
-          <DropdownMenuItem className='flex cursor-pointer items-center gap-2'>
+          <DropdownMenuItem
+            className='flex cursor-pointer items-center gap-2'
+            onClick={handleSignOut}
+          >
             <LogOut className='h-4 w-4' />
             <span>Sign Out</span>
           </DropdownMenuItem>
