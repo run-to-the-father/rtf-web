@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { UserProvider } from '@/entities/user/ui/user-provider';
 import { Urbanist } from '@/shared/config/fonts';
 import { cn } from '@/shared/lib/utils';
 import ModalRoot from '@/shared/ui/modal-root';
 import { ToastProvider } from '@/shared/ui/toast';
 import { ThemeProvider } from '@/application/provider/theme-provider';
+import { UserProvider } from '@/application/provider/user-provider';
 import './globals.css';
 
 const baseUrl =

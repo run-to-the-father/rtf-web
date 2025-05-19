@@ -1,8 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { type User, parseUserFromSession } from '../model/user';
-import { useUserStore } from '../store/user-store';
+import {
+  type User,
+  parseUserFromSession,
+} from '../../entities/user/model/user';
+import { useUserStore } from '../../entities/user/store/user-store';
 
 /**
  * 사용자 인증 상태를 관리하는 프로바이더 컴포넌트

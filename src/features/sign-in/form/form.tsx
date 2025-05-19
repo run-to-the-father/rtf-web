@@ -191,12 +191,12 @@ export function SignInForm() {
         <Button
           type='button'
           variant='outline'
-          className={`flex h-14 items-center justify-center rounded-8pxr border border-secondary bg-white px-6 transition-all hover:bg-gray-50`}
+          className={`flex h-56pxr w-100pxr items-center justify-center rounded-8pxr border border-secondary bg-white px-6 transition-all hover:bg-gray-50`}
           onClick={handleGoogleSignIn}
           disabled={isLoading}
           aria-label='Sign in with Google'
         >
-          <GoogleIcon className='mr-2 h-5 w-5' />
+          <GoogleIcon width={32} height={32} />
         </Button>
       </div>
 
