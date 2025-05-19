@@ -189,54 +189,6 @@ export default function SupabaseTestPage() {
               {creating ? '메시지 생성 중...' : '메시지 추가'}
             </Button>
           </div>
-
-          <div className='mt-6'>
-            <Button
-              onClick={fetchMessages}
-              disabled={messagesLoading}
-              variant='outline'
-              className='mb-4'
-            >
-              {messagesLoading ? '불러오는 중...' : '메시지 목록 새로고침'}
-            </Button>
-
-            {messagesLoading ? (
-              <p>메시지 불러오는 중...</p>
-            ) : messagesError ? (
-              <div className='text-red-500'>
-                <p>오류 발생: {messagesError}</p>
-              </div>
-            ) : messages.length === 0 ? (
-              <p>메시지가 없습니다</p>
-            ) : (
-              <div className='space-y-4'>
-                {messages.map((message) => (
-                  <Card key={message.id}>
-                    <CardHeader className='py-3'>
-                      <div className='flex items-center justify-between'>
-                        <CardTitle className='text-sm'>
-                          메시지 ID: {message.id}
-                        </CardTitle>
-                        <Button
-                          variant='destructive'
-                          size='sm'
-                          onClick={() => deleteMessage(message.id)}
-                        >
-                          삭제
-                        </Button>
-                      </div>
-                    </CardHeader>
-                    <CardContent className='py-2'>
-                      <p>{message.content}</p>
-                    </CardContent>
-                    <CardFooter className='py-2 text-xs text-gray-500'>
-                      생성: {new Date(message.created_at).toLocaleString()}
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </div>
         </CardContent>
       </Card>
     </div>

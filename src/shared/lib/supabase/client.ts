@@ -1,16 +1,7 @@
-// 브라우저와 서버에서 사용하는 Supabase 클라이언트 구성
 'use client';
 
 import { createBrowserClient } from '@supabase/ssr';
 import { type SupabaseClient } from '@supabase/supabase-js';
-
-// 브라우저와 서버에서 사용하는 Supabase 클라이언트 구성
-
-// 브라우저와 서버에서 사용하는 Supabase 클라이언트 구성
-
-// 브라우저와 서버에서 사용하는 Supabase 클라이언트 구성
-
-// 브라우저와 서버에서 사용하는 Supabase 클라이언트 구성
 
 // 브라우저와 서버에서 사용하는 Supabase 클라이언트 구성
 
