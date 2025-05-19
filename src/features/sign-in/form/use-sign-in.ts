@@ -7,7 +7,6 @@ import {
   getGoogleSignInUrl,
   parseUserFromSession,
   signInSchema,
-  signInWithEmail,
 } from '@/entities/user';
 import { useUserStore } from '@/entities/user';
 import { supabase } from '@/shared/lib';
@@ -29,6 +28,7 @@ export function useSignIn() {
   const setUser = useUserStore((state) => state.setUser);
 
   // 리다이렉트 URL 가져오기
+  // 기본값을 '/'로 설정
   const redirectTo = searchParams?.get('redirectTo') || '/';
 
   const validateForm = (): boolean => {
@@ -81,24 +81,45 @@ export function useSignIn() {
     setIsLoading(true);
 
     try {
-      const result = await signInWithEmail(email, password);
+      // Supabase 이메일 로그인 직접 호출
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      if (result.success && result.user) {
-        // Supabase 세션에서 사용자 정보 추출
-        const { data } = await supabase.auth.getSession();
+      if (error) {
+        throw error;
+      }
 
-        // 사용자 상태 업데이트
-        const userData = parseUserFromSession(data.session);
-        if (userData) {
-          setUser(userData);
-          // 지정된 리다이렉트 URL로 이동
+      if (data?.session && data?.user) {
+        // 세션 API 호출해서 최신 사용자 정보 가져오기
+        const response = await fetch('/api/auth/session');
+        const sessionData = await response.json();
+
+        if (sessionData.user) {
+          // 사용자 상태 업데이트
+          setUser(sessionData.user);
+
           console.log(`로그인 성공, 리다이렉트:`, redirectTo);
-          router.push(redirectTo);
+
+          // 항상 홈으로 리다이렉트하려면 여기서 redirectTo를 '/'로 강제 설정
+          const homePath = '/';
+
+          // 현재 페이지 재로드하여 세션 쿠키를 확실히 적용
+          if (typeof window !== 'undefined') {
+            // redirectTo 대신 homePath 사용
+            window.location.href = homePath;
+            return;
+          } else {
+            // redirectTo 대신 homePath 사용
+            router.push(homePath);
+            router.refresh(); // 페이지 새로고침하여 서버 컴포넌트 다시 로드
+          }
         } else {
           throw new Error('사용자 정보를 가져올 수 없습니다.');
         }
       } else {
-        throw new Error(result.error || '로그인 실패');
+        throw new Error('로그인 실패: 세션 데이터가 없습니다.');
       }
     } catch (error) {
       console.error('로그인 오류:', error);
@@ -116,7 +137,8 @@ export function useSignIn() {
       console.log('구글 로그인 시도...');
 
       // 구글 로그인 URL 가져오기 (리다이렉트 URL 포함)
-      const googleUrl = getGoogleSignInUrl(redirectTo);
+      // 항상 홈으로 리다이렉트하려면 여기서 리다이렉트 경로를 '/'로
+      const googleUrl = getGoogleSignInUrl('/');
       console.log('구글 로그인 URL:', googleUrl);
 
       // 직접 window.location.href 사용 (router.push 대신)

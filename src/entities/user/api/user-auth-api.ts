@@ -9,15 +9,15 @@ import { Gender, User, parseUserFromSession } from '../model/user';
  */
 export async function getCurrentUser(): Promise<User | null> {
   try {
-    const { data, error } = await supabase.auth.getUser();
-    console.log('getCurrentUser 호출 결과:', {
-      success: !error,
-      hasUser: !!data?.user,
-    });
+    // 서버 API를 통해 사용자 정보 가져오기
+    const response = await fetch('/api/auth/session');
+    const data = await response.json();
 
-    if (error || !data?.user) return null;
+    if (!data.user) {
+      return null;
+    }
 
-    return mapSupabaseUser(data.user);
+    return data.user;
   } catch (error) {
     console.error('getCurrentUser 오류:', error);
     return null;
@@ -31,6 +31,7 @@ export async function signInWithEmail(email: string, password: string) {
   try {
     console.log('이메일 로그인 시도:', { email });
 
+    // 쿠키 옵션 명시적으로 설정
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -42,6 +43,11 @@ export async function signInWithEmail(email: string, password: string) {
     }
 
     console.log('이메일 로그인 성공:', { userId: data.user?.id });
+
+    // 로그인 후 세션 확인
+    const { data: sessionData } = await supabase.auth.getSession();
+    console.log('세션 확인:', { hasSession: !!sessionData.session });
+
     return { success: true, user: data.user };
   } catch (error) {
     console.error('이메일 로그인 처리 실패:', error);
@@ -75,7 +81,8 @@ export async function signOut() {
       throw error;
     }
 
-    console.log('로그아웃 성공');
+    // 로그아웃 후 페이지 새로고침
+    window.location.href = '/sign-in';
     return { success: true };
   } catch (error) {
     console.error('로그아웃 오류 처리:', error);
@@ -108,6 +115,7 @@ export async function signUp(
           nickname: userData.nickname || email.split('@')[0],
           gender: userData.gender || 'other',
         },
+        emailRedirectTo: `${window.location.origin}/api/auth/callback?redirectTo=/`,
       },
     });
 

@@ -12,8 +12,8 @@ export async function GET(request: Request) {
       process.env.NEXT_PUBLIC_BASE_URL ||
       `${requestUrl.protocol}//${requestUrl.host}`;
 
-    // redirectTo 파라미터 확인
-    const redirectTo = requestUrl.searchParams.get('redirectTo') || '/';
+    // 항상 홈으로 리다이렉트
+    const redirectTo = '/';
 
     console.log('OAuth 기본 URL:', baseUrl);
     const callbackUrl = `${baseUrl}/api/auth/callback`;
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
           access_type: 'offline',
           prompt: 'consent',
           // 디버깅용 상태 파라미터
-          state: `oauth-${Date.now()}`,
+          state: `oauth-${Date.now()}|redirectTo=/`,
         },
       },
     });
@@ -64,14 +64,9 @@ export async function GET(request: Request) {
     // OAuth 제공자의 URL로 리다이렉트 (OAuth URL에 원래 redirectTo 정보 추가)
     const finalUrl = new URL(data.url);
 
-    // 원래 리다이렉트 URL을 상태에 추가
-    if (redirectTo && redirectTo !== '/') {
-      const originalState = finalUrl.searchParams.get('state') || '';
-      finalUrl.searchParams.set(
-        'state',
-        `${originalState}|redirectTo=${redirectTo}`,
-      );
-    }
+    // 항상 홈으로 리다이렉트하도록 설정
+    const originalState = finalUrl.searchParams.get('state') || '';
+    finalUrl.searchParams.set('state', `${originalState}|redirectTo=/`);
 
     console.log('구글 OAuth URL로 리다이렉트:', finalUrl.toString());
 
