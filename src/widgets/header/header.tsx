@@ -2,6 +2,7 @@
 
 import type React from 'react';
 import { ChevronDown, PenSquare } from 'lucide-react';
+import { useAuth } from '@/entities/user/hooks/useAuth';
 import { useUserStore } from '@/entities/user/store/user-store';
 import { Button } from '@/shared/ui/button';
 import { AvatarDropdown } from '@entities/user/ui/avatar-dropdown';
@@ -11,8 +12,8 @@ interface HeaderProps {
 }
 
 export const Header = ({ sidebarTrigger }: HeaderProps) => {
-  // useUserStore에서 사용자 정보 가져오기
-  const { user, isAuthenticated } = useUserStore();
+  // useAuth 훅을 사용하여 사용자 정보 가져오기 (로딩 상태는 AvatarDropdown에서 처리)
+  const { user } = useAuth();
 
   // 로그인된 사용자가 없을 경우 기본값 (개발 및 디자인 테스트용)
   const fallbackUserData = {

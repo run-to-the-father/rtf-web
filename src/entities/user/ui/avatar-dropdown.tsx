@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { LogOut, PenSquare, Settings } from 'lucide-react';
+import { Loader2, LogOut, PenSquare, Settings } from 'lucide-react';
 import { SettingsDrawer } from '@/features/user/setting-user/settings-drawer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar';
 import { Button } from '@/shared/ui/button';
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu';
 import { toast } from '@/shared/ui/toast';
+import { useAuthContext } from '@/application/provider/user-provider';
 import { useUserStore } from '../store/user-store';
 
 export interface UserData {
@@ -28,8 +29,10 @@ interface AvatarDropdownProps {
 
 export const AvatarDropdown = ({ userData }: AvatarDropdownProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const router = useRouter();
   const { user, isAuthenticated, clearUser } = useUserStore();
+  const { isLoading } = useAuthContext();
 
   const handleOpenChange = (open: boolean) => {
     setIsSettingsOpen(open);
@@ -41,6 +44,8 @@ export const AvatarDropdown = ({ userData }: AvatarDropdownProps) => {
 
   const handleSignOut = async () => {
     try {
+      setIsSigningOut(true);
+
       // 로그아웃 API 호출
       const response = await fetch('/api/auth/signout', {
         method: 'POST',
@@ -74,6 +79,8 @@ export const AvatarDropdown = ({ userData }: AvatarDropdownProps) => {
         title: '로그아웃 실패',
         description: error.message || '로그아웃 처리 중 오류가 발생했습니다.',
       });
+    } finally {
+      setIsSigningOut(false);
     }
   };
 
@@ -98,6 +105,15 @@ export const AvatarDropdown = ({ userData }: AvatarDropdownProps) => {
     userData?.name ||
     userData?.email ||
     'User';
+
+  // 로딩 중이거나 로그아웃 중일 때 스켈레톤 표시
+  if (isLoading || isSigningOut) {
+    return (
+      <div className='flex h-8 w-8 items-center justify-center rounded-full bg-gray-200'>
+        <Loader2 className='h-4 w-4 animate-spin text-gray-400' />
+      </div>
+    );
+  }
 
   return (
     <>
