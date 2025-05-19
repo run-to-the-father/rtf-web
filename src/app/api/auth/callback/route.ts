@@ -37,21 +37,8 @@ export async function GET(request: NextRequest) {
   const errorCode = requestUrl.searchParams.get('error_code');
   const state = requestUrl.searchParams.get('state');
 
-  // state 파라미터에서 redirectTo 추출
+  // state 파라미터에서 redirectTo 추출 (무시하고 항상 홈으로 리다이렉트)
   let redirectTo = '/';
-  if (state && state.includes('|redirectTo=')) {
-    const parts = state.split('|redirectTo=');
-    if (parts.length > 1) {
-      redirectTo = decodeURIComponent(parts[1]);
-      console.log('State에서 추출한 redirectTo:', redirectTo);
-    }
-  } else {
-    // 명시적 redirectTo 파라미터 확인
-    const explicitRedirectTo = requestUrl.searchParams.get('redirectTo');
-    if (explicitRedirectTo) {
-      redirectTo = explicitRedirectTo;
-    }
-  }
 
   console.log('OAuth 콜백 파라미터:', {
     hasCode: !!code,
@@ -148,9 +135,9 @@ export async function GET(request: NextRequest) {
       userMetadata: sessionData.session?.user?.user_metadata,
     });
 
-    // 리다이렉트 URL에 캐시 방지 파라미터 추가
+    // 항상 홈으로 리다이렉트
     const timestamp = Date.now();
-    const targetUrl = new URL(redirectTo, baseUrl);
+    const targetUrl = new URL('/', baseUrl);
     targetUrl.searchParams.set('auth_success', 'true');
     targetUrl.searchParams.set('t', timestamp.toString());
 

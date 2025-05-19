@@ -28,14 +28,21 @@ export function mapSupabaseUser(
 }
 
 /**
- * 세션에서 사용자 정보 가져오기
+ * 현재 세션 정보를 API로부터 가져옵니다.
  */
 export async function getSessionUser(): Promise<User | null> {
   try {
-    const { data, error } = await supabase.auth.getSession();
-    if (error || !data.session) return null;
+    // 서버 API를 통해 세션 정보 가져오기
+    const response = await fetch('/api/auth/session', {
+      headers: { 'Cache-Control': 'no-cache, no-store' },
+    });
 
-    return mapSupabaseUser(data.session.user);
+    if (!response.ok) {
+      throw new Error(`세션 조회 실패: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.user || null;
   } catch (error) {
     console.error('세션 사용자 정보 가져오기 실패:', error);
     return null;
@@ -50,6 +57,8 @@ export async function signOut(): Promise<{ success: boolean; error?: string }> {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
 
+    // 로그아웃 성공 시 세션 페이지로 이동
+    window.location.href = '/sign-in';
     return { success: true };
   } catch (error) {
     console.error('로그아웃 오류:', error);
@@ -72,8 +81,15 @@ export function setupAuthListener(
     console.log('Auth 상태 변경:', event, !!session);
 
     if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-      const user = session ? mapSupabaseUser(session.user) : null;
-      callback(user);
+      try {
+        // 서버 API를 통해 최신 사용자 정보 가져오기
+        const user = await getSessionUser();
+        callback(user);
+      } catch (error) {
+        console.error('Auth 상태 변경 중 오류:', error);
+        const fallbackUser = session ? mapSupabaseUser(session.user) : null;
+        callback(fallbackUser);
+      }
     } else if (event === 'SIGNED_OUT') {
       callback(null);
     }
