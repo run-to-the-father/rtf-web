@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/shared/lib';
+import { createServerComponentSupabaseClient } from '@/shared/lib/supabase/server';
 
 export async function GET() {
   try {
+    // 서버용 Supabase 클라이언트 생성
+    const supabase = await createServerComponentSupabaseClient();
+
     // Supabase 버전 정보만 가져오기 (데이터베이스 쿼리 없이)
     const { data: version } = await supabase.rpc('version');
 
