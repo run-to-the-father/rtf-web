@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { cn } from '@/shared/lib/utils';
+import { AuthStateProvider } from '@/shared/ui/auth-state-provider';
 import ModalRoot from '@/shared/ui/modal-root';
+import { ToastProvider } from '@/shared/ui/toast';
 import { ThemeProvider } from '@application/provider/theme-provider';
 import { Urbanist } from '@shared/config/fonts';
 import './globals.css';
@@ -57,8 +59,12 @@ export default function RootLayout({
           disableTransitionOnChange
           storageKey='rtf-theme'
         >
-          <ModalRoot />
-          {children}
+          <AuthStateProvider>
+            <ToastProvider>
+              <ModalRoot />
+              {children}
+            </ToastProvider>
+          </AuthStateProvider>
         </ThemeProvider>
       </body>
     </html>

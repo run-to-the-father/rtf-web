@@ -1,5 +1,5 @@
 import { InternalAxiosRequestConfig } from 'axios';
-import { COOKIE_KEY } from '@/shared/model/constant/cookie-option';
+import { COOKIE_KEY } from '@/shared/models/constant/cookie-option';
 
 /** 요청마다 헤더에 토큰을 전송 */
 export const onRequestServer = async (config: InternalAxiosRequestConfig) => {

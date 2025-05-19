@@ -14,8 +14,17 @@ export const ACCESS_TOKEN_COOKIE_OPTION = {
   secure: process.env.NODE_ENV === 'production',
 } as const;
 
+export const REFRESH_TOKEN_COOKIE_OPTION = {
+  path: '/',
+  httpOnly: true,
+  maxAge: 60 * 60 * 24 * 30,
+  sameSite: 'lax',
+  secure: process.env.NODE_ENV === 'production',
+} as const;
+
 export const COOKIE_KEY = {
   USER_SESSION: 'user_session',
   ACCESS_TOKEN: 'user_access',
+  REFRESH_TOKEN: 'user_refresh',
   VIEW_MODE: 'view_mode',
 } as const;

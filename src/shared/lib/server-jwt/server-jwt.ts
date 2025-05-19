@@ -7,7 +7,7 @@ import {
   SESSION_COOKIE_OPTION,
 } from '@/shared/models/constant/cookie-option';
 
-const JWT_SECRET = process.env.AI_JWT_SECRET!;
+const JWT_SECRET = process.env.JWT_SECRET!;
 
 const getServerSession = async () => {
   const cookieStore = await cookies();
