@@ -54,7 +54,7 @@ export function createServerComponentSupabaseClient(): SupabaseClient {
  * 현재 로그인한 사용자 정보 가져오기 (서버 컴포넌트용)
  */
 export async function getServerSessionUser() {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.auth.getUser();
 
   if (error || !data?.user) {
