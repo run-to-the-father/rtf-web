@@ -12,7 +12,6 @@ import {
 } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
 import { Textarea } from '@/shared/ui/textarea';
-import AxiosSupabaseTest from './axios-test';
 
 export default function SupabaseTestPage() {
   const [connectionData, setConnectionData] = useState<any>(null);
@@ -166,9 +165,6 @@ export default function SupabaseTestPage() {
           </Button>
         </CardFooter>
       </Card>
-
-      {/* Axios를 사용한 테스트 컴포넌트 */}
-      <AxiosSupabaseTest />
 
       {/* 메시지 목록 및 생성 섹션 */}
       <Card className='mb-8 mt-10'>

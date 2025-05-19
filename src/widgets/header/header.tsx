@@ -2,6 +2,8 @@
 
 import type React from 'react';
 import { ChevronDown, PenSquare } from 'lucide-react';
+import { useAuth } from '@/entities/user/hooks/useAuth';
+import { useUserStore } from '@/entities/user/store/user-store';
 import { Button } from '@/shared/ui/button';
 import { AvatarDropdown } from '@entities/user/ui/avatar-dropdown';
 
@@ -10,12 +12,32 @@ interface HeaderProps {
 }
 
 export const Header = ({ sidebarTrigger }: HeaderProps) => {
-  // 임시 사용자 데이터 (실제 구현에서는 상태 관리 또는 서버에서 가져옴)
-  const userData = {
+  // useAuth 훅을 사용하여 사용자 정보 가져오기 (로딩 상태는 AvatarDropdown에서 처리)
+  const { user } = useAuth();
+
+  // 로그인된 사용자가 없을 경우 기본값 (개발 및 디자인 테스트용)
+  const fallbackUserData = {
     name: 'Run to the Father',
     email: 'runtothefather@gmail.com',
-    avatarFallback: 'U',
+    avatarFallback: 'RT',
   };
+
+  // 로그인된 사용자 정보로 userData 구성
+  const userData = user
+    ? {
+        name: user.nickname || user.email,
+        email: user.email,
+        avatarFallback: getInitials(user),
+      }
+    : fallbackUserData;
+
+  // 이니셜 생성 함수
+  function getInitials(user: { nickname?: string; email: string }): string {
+    if (user.nickname) {
+      return user.nickname.substring(0, 2).toUpperCase();
+    }
+    return user.email.substring(0, 2).toUpperCase();
+  }
 
   return (
     <header className='fixed left-0 top-0 z-30 flex h-14 w-full items-center justify-between bg-white px-3 py-2'>

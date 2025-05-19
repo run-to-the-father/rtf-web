@@ -7,7 +7,6 @@ import { Gender } from '@/entities/user';
 import { Button } from '@/shared/ui/button';
 import GoogleIcon from '@/shared/ui/icon/google';
 import { Input } from '@/shared/ui/input';
-import { useSignUp } from './use-sign-up';
 
 // 에러 메시지 컴포넌트
 const ErrorMessage = ({ message }: { message?: string }) => {
@@ -17,26 +16,6 @@ const ErrorMessage = ({ message }: { message?: string }) => {
 
 export function SignUpForm() {
   const router = useRouter();
-  const {
-    username,
-    setUsername,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    confirmPassword,
-    setConfirmPassword,
-    gender,
-    setGender,
-    showPassword,
-    showConfirmPassword,
-    isLoading,
-    errors,
-    handleSubmit,
-    handleGoogleSignUp,
-    toggleShowPassword,
-    toggleShowConfirmPassword,
-  } = useSignUp();
 
   return (
     <div className='mx-auto w-full max-w-md p-6'>
@@ -49,85 +28,59 @@ export function SignUpForm() {
           <ChevronLeft />
         </button>
       </div>
-      <form onSubmit={handleSubmit} className='mt-28pxr space-y-4'>
-        {errors.form && (
-          <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-500'>
-            {errors.form}
-          </div>
-        )}
-
+      <form className='mt-28pxr space-y-4'>
         <div className='space-y-1'>
           <Input
             type='text'
             placeholder='Username'
-            value={username}
-            onChange={setUsername}
             required
-            className={`h-14 bg-secondary ${errors.username ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-            disabled={isLoading}
+            className={`h-14 bg-secondary`}
           />
-          <ErrorMessage message={errors.username} />
         </div>
 
         <div className='space-y-1'>
           <Input
             type='email'
             placeholder='Email'
-            value={email}
-            onChange={setEmail}
             required
-            className={`h-14 bg-secondary ${errors.email ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-            disabled={isLoading}
+            className={`h-14 bg-secondary`}
           />
-          <ErrorMessage message={errors.email} />
         </div>
 
         <div className='space-y-1'>
           <div className='relative flex items-center'>
             <Input
-              type={showPassword ? 'text' : 'password'}
+              type='password'
               placeholder='Password'
-              value={password}
-              onChange={setPassword}
               required
-              className={`h-14 bg-secondary pr-10 ${errors.password ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-              disabled={isLoading}
+              className={`h-14 bg-secondary`}
             />
             <button
               type='button'
               className='absolute right-3'
-              onClick={toggleShowPassword}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-label='Show password'
             >
-              {showPassword ? <EyeClosed /> : <Eye />}
+              <Eye />
             </button>
           </div>
-          <ErrorMessage message={errors.password} />
         </div>
 
         <div className='space-y-1'>
           <div className='relative flex items-center'>
             <Input
-              type={showConfirmPassword ? 'text' : 'password'}
+              type='password'
               placeholder='Confirm password'
-              value={confirmPassword}
-              onChange={setConfirmPassword}
               required
-              className={`h-14 bg-secondary pr-10 ${errors.confirmPassword ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-              disabled={isLoading}
+              className={`h-14 bg-secondary`}
             />
             <button
               type='button'
               className='absolute right-3'
-              onClick={toggleShowConfirmPassword}
-              aria-label={
-                showConfirmPassword ? 'Hide password' : 'Show password'
-              }
+              aria-label='Show password'
             >
-              {showConfirmPassword ? <EyeClosed /> : <Eye />}
+              <Eye />
             </button>
           </div>
-          <ErrorMessage message={errors.confirmPassword} />
         </div>
 
         <div className='space-y-1'>
@@ -139,9 +92,6 @@ export function SignUpForm() {
                   type='radio'
                   name='gender'
                   value='male'
-                  checked={gender === 'male'}
-                  onChange={() => setGender('male')}
-                  disabled={isLoading}
                   className='h-4 w-4'
                 />
                 <span>Male</span>
@@ -151,9 +101,6 @@ export function SignUpForm() {
                   type='radio'
                   name='gender'
                   value='female'
-                  checked={gender === 'female'}
-                  onChange={() => setGender('female')}
-                  disabled={isLoading}
                   className='h-4 w-4'
                 />
                 <span>Female</span>
@@ -163,9 +110,6 @@ export function SignUpForm() {
                   type='radio'
                   name='gender'
                   value='other'
-                  checked={gender === 'other'}
-                  onChange={() => setGender('other')}
-                  disabled={isLoading}
                   className='h-4 w-4'
                 />
                 <span>Other</span>
@@ -177,9 +121,8 @@ export function SignUpForm() {
         <Button
           type='submit'
           className='h-14 w-full rounded-8pxr bg-black text-white'
-          disabled={isLoading}
         >
-          {isLoading ? 'Registering...' : 'Register'}
+          Register
         </Button>
       </form>
 
@@ -198,8 +141,6 @@ export function SignUpForm() {
         <button
           type='button'
           className='rounded-8pxr border border-secondary bg-white p-14pxr px-40pxr'
-          onClick={handleGoogleSignUp}
-          disabled={isLoading}
           aria-label='Sign up with Google'
         >
           <GoogleIcon className='h-26pxr w-26pxr' />

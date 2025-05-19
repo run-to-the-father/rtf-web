@@ -3,12 +3,17 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ChevronLeft, Eye, EyeClosed } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { ChevronLeft, Eye, EyeOff } from 'lucide-react';
+import {
+  type SignInFormData,
+  signInSchema,
+} from '@/entities/user/model/user-schema';
 import { Button } from '@/shared/ui/button';
 import GoogleIcon from '@/shared/ui/icon/google';
 import { Input } from '@/shared/ui/input';
 import { toast } from '@/shared/ui/toast';
-import { useSignIn } from './use-sign-in';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 // 에러 메시지 컴포넌트
 const ErrorMessage = ({ message }: { message?: string }) => {
@@ -19,93 +24,87 @@ const ErrorMessage = ({ message }: { message?: string }) => {
 export function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [googleBtnClicked, setGoogleBtnClicked] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
+  // 에러 파라미터 확인
+  const errorType = searchParams.get('error');
+
+  // react-hook-form 설정
   const {
-    email,
-    setEmail,
-    password,
-    setPassword,
-    showPassword,
-    isLoading,
-    errors,
-    handleEmailSignIn,
-    handleGoogleSignIn,
-    toggleShowPassword,
-  } = useSignIn();
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormData>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
-  // 오류 메시지 처리
-  const error = searchParams.get('error');
-  const errorDetails = searchParams.get('details');
-
-  // 페이지 로드 시 오류 처리
+  // 에러 메시지 표시
   useEffect(() => {
-    // 오류가 있을 때만 실행
-    if (error) {
-      let errorMessage = 'Login failed. Please try again.';
+    if (errorType === 'auth_callback_error') {
+      toast({
+        variant: 'destructive',
+        title: '인증 오류',
+        description:
+          '소셜 로그인 처리 중 오류가 발생했습니다. 다시 시도해 주세요.',
+      });
+    }
+  }, [errorType]);
 
-      if (error === 'no_code') {
-        errorMessage = 'No authentication code. Please try again.';
-      } else if (error === 'auth_error') {
-        errorMessage = `Authentication error. ${errorDetails || 'Please try again.'}`;
-      } else if (error === 'server_error') {
-        errorMessage = `Server error. ${errorDetails || 'Please try again later.'}`;
-      }
+  // 이메일/패스워드 로그인 처리
+  const onSubmit = async (data: SignInFormData) => {
+    try {
+      setIsLoading(true);
 
-      // 콘솔에 항상 로깅
-      console.error('로그인 오류:', {
-        error,
-        details: errorDetails,
-        message: errorMessage,
+      const response = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       });
 
-      // setTimout을 사용하여 컴포넌트 마운트 후 실행되도록 함
-      const timer = setTimeout(() => {
-        try {
-          toast({
-            variant: 'destructive',
-            title: 'Login Error',
-            description: errorMessage,
-          });
-        } catch (toastError) {
-          console.error('Toast 에러:', toastError);
-        }
-      }, 100);
+      const result = await response.json();
 
-      return () => clearTimeout(timer);
+      if (!response.ok) {
+        throw new Error(result.message || '로그인에 실패했습니다.');
+      }
+
+      // 로그인 성공
+      toast({
+        title: '로그인 성공',
+        description: '환영합니다!',
+      });
+
+      // 메인 페이지로 리디렉션
+      router.push('/chat');
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: '로그인 실패',
+        description: error.message || '로그인 중 오류가 발생했습니다.',
+      });
+    } finally {
+      setIsLoading(false);
     }
-  }, [error, errorDetails]);
+  };
 
-  // 구글 로그인 핸들러
-  const onGoogleSignInClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-
-    if (googleBtnClicked || isLoading) return; // 이미 처리 중이면 중복 클릭 방지
-
-    setGoogleBtnClicked(true);
-    console.log('구글 로그인 버튼 클릭됨');
-
+  // Google 로그인 처리
+  const handleGoogleSignIn = async () => {
     try {
-      // 디바운스 없이 바로 처리 - 직접 window.location.href 사용할 것이므로 지연 불필요
-      handleGoogleSignIn();
-
-      // 안전장치: 15초 후에도 페이지가 변경되지 않으면 상태 리셋
-      const resetTimer = setTimeout(() => {
-        console.log('구글 로그인 리다이렉트 확인...');
-        if (document.location.pathname.includes('/sign-in')) {
-          console.log('구글 로그인 리다이렉트 타임아웃, 상태 리셋');
-          setGoogleBtnClicked(false);
-
-          // 콘솔 로그만 남기고 토스트는 사용하지 않음
-          console.error('Google login request timed out. Please try again.');
-        }
-      }, 15000);
-
-      // 컴포넌트 언마운트시 타이머 정리
-      return () => clearTimeout(resetTimer);
-    } catch (error) {
-      console.error('구글 로그인 버튼 처리 오류:', error);
-      setGoogleBtnClicked(false);
+      setIsLoading(true);
+      window.location.href = '/api/auth/google';
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Google 로그인 실패',
+        description: error.message || 'Google 로그인 중 오류가 발생했습니다.',
+      });
+      setIsLoading(false);
     }
   };
 
@@ -116,6 +115,7 @@ export function SignInForm() {
           className='flex h-40pxr w-40pxr items-center justify-center rounded-12pxr border border-secondary'
           onClick={() => router.back()}
           aria-label='Go back'
+          type='button'
         >
           <ChevronLeft />
         </button>
@@ -125,24 +125,16 @@ export function SignInForm() {
         <h2 className='text-3xl font-bold'>Glad to see you, Again!</h2>
       </div>
 
-      <form onSubmit={handleEmailSignIn} className='space-y-4'>
-        {errors.form && (
-          <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-500'>
-            {errors.form}
-          </div>
-        )}
-
+      <form className='space-y-4' onSubmit={handleSubmit(onSubmit)}>
         <div className='space-y-1'>
           <Input
             type='email'
             placeholder='Enter your email'
-            value={email}
-            onChange={setEmail}
             required
-            className={`h-14 bg-secondary ${errors.email ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-            disabled={isLoading || googleBtnClicked}
+            className={`h-14 bg-secondary ${errors.email ? 'border-red-500' : ''}`}
+            {...register('email')}
           />
-          <ErrorMessage message={errors.email} />
+          <ErrorMessage message={errors.email?.message} />
         </div>
 
         <div className='space-y-1'>
@@ -150,28 +142,25 @@ export function SignInForm() {
             <Input
               type={showPassword ? 'text' : 'password'}
               placeholder='Enter your password'
-              value={password}
-              onChange={setPassword}
               required
-              className={`h-14 bg-secondary pr-10 ${errors.password ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-              disabled={isLoading || googleBtnClicked}
+              className={`h-14 bg-secondary ${errors.password ? 'border-red-500' : ''}`}
+              {...register('password')}
             />
             <button
               type='button'
               className='absolute right-3'
-              onClick={toggleShowPassword}
+              onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
-              disabled={isLoading || googleBtnClicked}
             >
-              {showPassword ? <EyeClosed /> : <Eye />}
+              {showPassword ? <EyeOff /> : <Eye />}
             </button>
           </div>
-          <ErrorMessage message={errors.password} />
+          <ErrorMessage message={errors.password?.message} />
         </div>
 
         <div className='flex justify-end'>
           <Link
-            href='/password'
+            href='/forgot-password'
             className='text-sm text-gray-500 hover:text-black'
           >
             Forgot Password?
@@ -181,9 +170,9 @@ export function SignInForm() {
         <Button
           type='submit'
           className='h-14 w-full rounded-8pxr bg-black text-white'
-          disabled={isLoading || googleBtnClicked}
+          disabled={isLoading}
         >
-          {isLoading ? 'Logging in...' : 'Login'}
+          {isLoading ? 'Loading...' : 'Login'}
         </Button>
       </form>
 
@@ -202,15 +191,12 @@ export function SignInForm() {
         <Button
           type='button'
           variant='outline'
-          className={`flex h-14 items-center justify-center rounded-8pxr border border-secondary bg-white px-6 transition-all hover:bg-gray-50 ${
-            googleBtnClicked ? 'animate-pulse bg-gray-100' : ''
-          }`}
-          onClick={onGoogleSignInClick}
-          disabled={isLoading || googleBtnClicked}
+          className={`flex h-56pxr w-100pxr items-center justify-center rounded-8pxr border border-secondary bg-white px-6 transition-all hover:bg-gray-50`}
+          onClick={handleGoogleSignIn}
+          disabled={isLoading}
           aria-label='Sign in with Google'
         >
-          <GoogleIcon className='mr-2 h-5 w-5' />
-          <span>Sign in with Google</span>
+          <GoogleIcon width={32} height={32} />
         </Button>
       </div>
 

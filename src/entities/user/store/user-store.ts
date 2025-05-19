@@ -2,7 +2,6 @@
 
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { signOut } from '../api/user-auth-api';
 import { User } from '../model/user';
 
 interface UserState {
@@ -15,7 +14,6 @@ interface UserState {
   // 액션
   setUser: (user: User) => void;
   clearUser: () => void;
-  logout: () => Promise<void>;
 }
 
 /**
@@ -54,34 +52,6 @@ export const useUserStore = create<UserState>()(
             isInitialized: true,
             error: null,
           })),
-
-        /**
-         * 로그아웃
-         */
-        logout: async () => {
-          set({ isLoading: true });
-
-          try {
-            const { success, error } = await signOut();
-
-            if (success) {
-              set({
-                user: null,
-                isAuthenticated: false,
-                isLoading: false,
-                error: null,
-                isInitialized: true,
-              });
-            } else {
-              throw new Error(error || '로그아웃 실패');
-            }
-          } catch (error) {
-            set({
-              error: error instanceof Error ? error.message : '로그아웃 실패',
-              isLoading: false,
-            });
-          }
-        },
       }),
       {
         name: 'user-store', // 로컬 스토리지 키
