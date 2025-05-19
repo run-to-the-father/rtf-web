@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { Gender } from './user';
 
 /**
  * 이메일 유효성 검증 스키마
@@ -25,6 +26,18 @@ export const passwordSchema = z
   });
 
 /**
+ * 닉네임 유효성 검증 스키마
+ * 2~20자 사이, 특수문자 제한
+ */
+export const nicknameSchema = z
+  .string()
+  .min(2, { message: '닉네임은 최소 2자 이상이어야 합니다.' })
+  .max(20, { message: '닉네임은 최대 20자까지 입력 가능합니다.' })
+  .regex(/^[A-Za-z0-9가-힣_]+$/, {
+    message: '닉네임은 영문, 숫자, 한글, 밑줄(_)만 사용 가능합니다.',
+  });
+
+/**
  * 로그인 유효성 검증 스키마
  */
 export const signInSchema = z.object({
@@ -37,11 +50,15 @@ export const signInSchema = z.object({
  */
 export const signUpSchema = z
   .object({
+    nickname: nicknameSchema,
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: z
       .string()
       .min(1, { message: '비밀번호 확인을 입력해주세요.' }),
+    gender: z.enum(['male', 'female', 'other'], {
+      errorMap: () => ({ message: '성별을 선택해주세요.' }),
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: '비밀번호와 비밀번호 확인이 일치하지 않습니다.',

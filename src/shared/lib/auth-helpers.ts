@@ -1,7 +1,7 @@
 'use client';
 
 import { User } from '@/entities/user/model/user';
-import { supabase } from '@/shared/lib';
+import { supabase } from '@/shared/lib/supabase/client';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 
 /**
