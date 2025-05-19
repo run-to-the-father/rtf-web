@@ -1,13 +1,15 @@
+import { Metadata } from 'next';
 import { SignUpForm } from '@/features/sign-up/form';
 
-function SignUpPage() {
+export const metadata: Metadata = {
+  title: 'Sign Up - Run to the Father',
+  description: 'Create a new account for Run to the Father',
+};
+
+export default function SignUpPage() {
   return (
-    <div className='flex min-h-screen items-center justify-center bg-white'>
-      <div className='w-full max-w-md'>
-        <SignUpForm />
-      </div>
+    <div className='flex h-full min-h-screen w-full items-center justify-center'>
+      <SignUpForm />
     </div>
   );
 }
-
-export default SignUpPage;

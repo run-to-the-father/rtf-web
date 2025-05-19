@@ -3,6 +3,13 @@
 import Link from 'next/link';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
+import { useForgotPassword } from './use-forgot-password';
+
+// 에러 메시지 컴포넌트
+const ErrorMessage = ({ message }: { message?: string }) => {
+  if (!message) return null;
+  return <p className='mt-1 text-sm text-red-500'>{message}</p>;
+};
 
 interface PasswordForgotFormProps {
   email: string;
@@ -15,20 +22,13 @@ export function PasswordForgotForm({
   onEmailChange,
   onSendSuccess,
 }: PasswordForgotFormProps) {
-  // OTP 인증 코드 보내기
-  const handleSendCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-
-    try {
-      // TODO: Supabase를 사용하여 OTP 코드 전송 로직 구현
-      console.log('OTP 코드 보내기:', email);
-      // 다음 단계로 이동
-      onSendSuccess();
-    } catch (error) {
-      console.error('OTP 전송 오류:', error);
-    }
-  };
+  const {
+    email: emailValue,
+    setEmail,
+    isLoading,
+    errors,
+    handleSendCode,
+  } = useForgotPassword(email, onEmailChange, onSendSuccess);
 
   return (
     <div>
@@ -41,22 +41,31 @@ export function PasswordForgotForm({
       </div>
 
       <form onSubmit={handleSendCode} className='space-y-8'>
-        <div className='space-y-2'>
+        {errors.form && (
+          <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-500'>
+            {errors.form}
+          </div>
+        )}
+
+        <div className='space-y-1'>
           <Input
             type='email'
             placeholder='Enter your email'
-            value={email}
-            onChange={(e) => onEmailChange(e.target.value)}
+            value={emailValue}
+            onChange={setEmail}
             required
-            className='bg-secondary h-14'
+            className={`h-14 bg-secondary ${errors.email ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+            disabled={isLoading}
           />
+          <ErrorMessage message={errors.email} />
         </div>
 
         <Button
           type='submit'
           className='h-14 w-full rounded-8pxr bg-black text-white'
+          disabled={isLoading}
         >
-          Send Code
+          {isLoading ? 'Sending...' : 'Send Code'}
         </Button>
       </form>
 

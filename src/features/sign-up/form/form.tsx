@@ -1,106 +1,185 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ChevronLeft, Eye, EyeClosed } from 'lucide-react';
+import { Gender } from '@/entities/user';
 import { Button } from '@/shared/ui/button';
 import GoogleIcon from '@/shared/ui/icon/google';
 import { Input } from '@/shared/ui/input';
+import { useSignUp } from './use-sign-up';
+
+// 에러 메시지 컴포넌트
+const ErrorMessage = ({ message }: { message?: string }) => {
+  if (!message) return null;
+  return <p className='mt-1 text-sm text-red-500'>{message}</p>;
+};
 
 export function SignUpForm() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // 비밀번호 일치 확인
-    if (password !== confirmPassword) {
-      alert('비밀번호가 일치하지 않습니다.');
-      return;
-    }
-    // 여기에 회원가입 로직 구현
-    console.log('회원가입 시도:', { username, email, password });
-  };
+  const router = useRouter();
+  const {
+    username,
+    setUsername,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    gender,
+    setGender,
+    showPassword,
+    showConfirmPassword,
+    isLoading,
+    errors,
+    handleSubmit,
+    handleGoogleSignUp,
+    toggleShowPassword,
+    toggleShowConfirmPassword,
+  } = useSignUp();
 
   return (
     <div className='mx-auto w-full max-w-md p-6'>
       <div className='w-full'>
-        <button className='border-secondary flex h-40pxr w-40pxr items-center justify-center rounded-12pxr border'>
+        <button
+          className='flex h-40pxr w-40pxr items-center justify-center rounded-12pxr border border-secondary'
+          onClick={() => router.back()}
+          aria-label='Go back'
+        >
           <ChevronLeft />
         </button>
       </div>
       <form onSubmit={handleSubmit} className='mt-28pxr space-y-4'>
-        <div className='space-y-2'>
+        {errors.form && (
+          <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-500'>
+            {errors.form}
+          </div>
+        )}
+
+        <div className='space-y-1'>
           <Input
             type='text'
             placeholder='Username'
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={setUsername}
             required
-            className='bg-secondary h-14'
+            className={`h-14 bg-secondary ${errors.username ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+            disabled={isLoading}
           />
+          <ErrorMessage message={errors.username} />
         </div>
 
-        <div className='space-y-2'>
+        <div className='space-y-1'>
           <Input
             type='email'
             placeholder='Email'
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={setEmail}
             required
-            className='bg-secondary h-14'
+            className={`h-14 bg-secondary ${errors.email ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+            disabled={isLoading}
           />
+          <ErrorMessage message={errors.email} />
         </div>
 
-        <div className='relative flex items-center'>
-          <Input
-            type={showPassword ? 'text' : 'password'}
-            placeholder='Password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className='bg-secondary h-14 pr-10'
-          />
-          <button
-            type='button'
-            className='absolute right-3'
-            onClick={() => setShowPassword(!showPassword)}
-            aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
-          >
-            {showPassword ? <EyeClosed /> : <Eye />}
-          </button>
+        <div className='space-y-1'>
+          <div className='relative flex items-center'>
+            <Input
+              type={showPassword ? 'text' : 'password'}
+              placeholder='Password'
+              value={password}
+              onChange={setPassword}
+              required
+              className={`h-14 bg-secondary pr-10 ${errors.password ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+              disabled={isLoading}
+            />
+            <button
+              type='button'
+              className='absolute right-3'
+              onClick={toggleShowPassword}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeClosed /> : <Eye />}
+            </button>
+          </div>
+          <ErrorMessage message={errors.password} />
         </div>
 
-        <div className='relative flex items-center'>
-          <Input
-            type={showConfirmPassword ? 'text' : 'password'}
-            placeholder='Confirm password'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            className='bg-secondary h-14 pr-10'
-          />
-          <button
-            type='button'
-            className='absolute right-3'
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            aria-label={
-              showConfirmPassword ? '비밀번호 숨기기' : '비밀번호 보기'
-            }
-          >
-            {showConfirmPassword ? <EyeClosed /> : <Eye />}
-          </button>
+        <div className='space-y-1'>
+          <div className='relative flex items-center'>
+            <Input
+              type={showConfirmPassword ? 'text' : 'password'}
+              placeholder='Confirm password'
+              value={confirmPassword}
+              onChange={setConfirmPassword}
+              required
+              className={`h-14 bg-secondary pr-10 ${errors.confirmPassword ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+              disabled={isLoading}
+            />
+            <button
+              type='button'
+              className='absolute right-3'
+              onClick={toggleShowConfirmPassword}
+              aria-label={
+                showConfirmPassword ? 'Hide password' : 'Show password'
+              }
+            >
+              {showConfirmPassword ? <EyeClosed /> : <Eye />}
+            </button>
+          </div>
+          <ErrorMessage message={errors.confirmPassword} />
+        </div>
+
+        <div className='space-y-1'>
+          <div className='flex flex-col'>
+            <label className='mb-2 text-sm font-medium'>Gender</label>
+            <div className='flex space-x-4'>
+              <label className='flex cursor-pointer items-center space-x-2'>
+                <input
+                  type='radio'
+                  name='gender'
+                  value='male'
+                  checked={gender === 'male'}
+                  onChange={() => setGender('male')}
+                  disabled={isLoading}
+                  className='h-4 w-4'
+                />
+                <span>Male</span>
+              </label>
+              <label className='flex cursor-pointer items-center space-x-2'>
+                <input
+                  type='radio'
+                  name='gender'
+                  value='female'
+                  checked={gender === 'female'}
+                  onChange={() => setGender('female')}
+                  disabled={isLoading}
+                  className='h-4 w-4'
+                />
+                <span>Female</span>
+              </label>
+              <label className='flex cursor-pointer items-center space-x-2'>
+                <input
+                  type='radio'
+                  name='gender'
+                  value='other'
+                  checked={gender === 'other'}
+                  onChange={() => setGender('other')}
+                  disabled={isLoading}
+                  className='h-4 w-4'
+                />
+                <span>Other</span>
+              </label>
+            </div>
+          </div>
         </div>
 
         <Button
           type='submit'
           className='h-14 w-full rounded-8pxr bg-black text-white'
+          disabled={isLoading}
         >
-          Register
+          {isLoading ? 'Registering...' : 'Register'}
         </Button>
       </form>
 
@@ -118,8 +197,10 @@ export function SignUpForm() {
       <div className='mt-27pxr flex items-center justify-center'>
         <button
           type='button'
-          className='border-secondary rounded-8pxr border bg-white p-14pxr px-40pxr'
-          aria-label='Google로 회원가입'
+          className='rounded-8pxr border border-secondary bg-white p-14pxr px-40pxr'
+          onClick={handleGoogleSignUp}
+          disabled={isLoading}
+          aria-label='Sign up with Google'
         >
           <GoogleIcon className='h-26pxr w-26pxr' />
         </button>

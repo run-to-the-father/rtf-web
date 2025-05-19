@@ -1,7 +1,9 @@
 'use client';
 
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Menu } from 'lucide-react';
+import { useUserStore } from '@/entities/user';
 import { cn } from '@/shared/lib/utils';
 import { Button } from '@/shared/ui/button';
 import { Drawer, DrawerContent, DrawerHeader } from '@/shared/ui/drawer';
@@ -15,6 +17,10 @@ export function HomeContainer() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const user = useUserStore((state) => state.user);
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -26,6 +32,26 @@ export function HomeContainer() {
     window.addEventListener('resize', checkIsMobile);
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
+
+  useEffect(() => {
+    const loginSuccess = searchParams.get('login');
+    if (loginSuccess === 'success') {
+      console.log('로그인 성공 파라미터 감지됨', {
+        timestamp: searchParams.get('t'),
+        isAuthenticated,
+        userExists: !!user,
+      });
+    }
+  }, [searchParams, isAuthenticated, user]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      console.log('홈 페이지: 인증되지 않음, 로그인 페이지로 리디렉트');
+      router.push('/sign-in');
+    } else {
+      console.log('홈 페이지: 인증됨', { user });
+    }
+  }, [isAuthenticated, router, user]);
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
