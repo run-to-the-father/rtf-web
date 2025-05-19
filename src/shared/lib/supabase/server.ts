@@ -2,7 +2,6 @@
 
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
-import type { SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -18,41 +17,31 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
  */
 export async function createServerSupabaseClient() {
   console.log('서버 액션 Supabase 클라이언트 생성 시작');
+
   try {
     const cookieStore = await cookies();
 
-    return createServerClient(supabaseUrl, supabaseAnonKey, {
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {
         get(name) {
-          try {
-            const value = cookieStore.get(name)?.value;
-            console.log(
-              `서버 액션 쿠키 조회: ${name} = ${value ? '있음' : '없음'}`,
-            );
-            return value;
-          } catch (error) {
-            console.error(`쿠키 조회 오류 (${name}):`, error);
-            return undefined;
+          const cookie = cookieStore.get(name);
+          if (name.includes('auth') || name.includes('session')) {
+            console.log(`서버 액션 인증 쿠키: ${name}`);
           }
+          return cookie?.value;
         },
         set(name, value, options) {
-          try {
-            console.log(`서버 액션 쿠키 설정: ${name}`);
-            cookieStore.set({ name, value, ...options });
-          } catch (error) {
-            console.error(`쿠키 설정 오류 (${name}):`, error);
-          }
+          console.log(`서버 액션 쿠키 설정: ${name}`);
+          cookieStore.set({ name, value, ...options });
         },
         remove(name, options) {
-          try {
-            console.log(`서버 액션 쿠키 삭제: ${name}`);
-            cookieStore.delete({ name, ...options });
-          } catch (error) {
-            console.error(`쿠키 삭제 오류 (${name}):`, error);
-          }
+          console.log(`서버 액션 쿠키 삭제: ${name}`);
+          cookieStore.delete({ name, ...options });
         },
       },
     });
+
+    return supabase;
   } catch (error) {
     console.error('서버 액션 Supabase 클라이언트 생성 오류:', error);
     throw error;
@@ -68,43 +57,33 @@ export async function createServerSupabaseClient() {
  *   // ...
  * }
  */
-export async function createServerComponentSupabaseClient(): Promise<SupabaseClient> {
+export async function createServerComponentSupabaseClient() {
   console.log('서버 컴포넌트 Supabase 클라이언트 생성 시작');
+
   try {
     const cookieStore = await cookies();
 
-    return createServerClient(supabaseUrl, supabaseAnonKey, {
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {
         get(name) {
-          try {
-            const value = cookieStore.get(name)?.value;
-            console.log(
-              `서버 컴포넌트 쿠키 조회: ${name} = ${value ? '있음' : '없음'}`,
-            );
-            return value;
-          } catch (error) {
-            console.error(`쿠키 조회 오류 (${name}):`, error);
-            return undefined;
+          const cookie = cookieStore.get(name);
+          if (name.includes('auth') || name.includes('session')) {
+            console.log(`서버 컴포넌트 인증 쿠키: ${name}`);
           }
+          return cookie?.value;
         },
         set(name, value, options) {
-          try {
-            console.log(`서버 컴포넌트 쿠키 설정: ${name}`);
-            cookieStore.set({ name, value, ...options });
-          } catch (error) {
-            console.error(`쿠키 설정 오류 (${name}):`, error);
-          }
+          console.log(`서버 컴포넌트 쿠키 설정: ${name}`);
+          cookieStore.set({ name, value, ...options });
         },
         remove(name, options) {
-          try {
-            console.log(`서버 컴포넌트 쿠키 삭제: ${name}`);
-            cookieStore.delete({ name, ...options });
-          } catch (error) {
-            console.error(`쿠키 삭제 오류 (${name}):`, error);
-          }
+          console.log(`서버 컴포넌트 쿠키 삭제: ${name}`);
+          cookieStore.delete({ name, ...options });
         },
       },
     });
+
+    return supabase;
   } catch (error) {
     console.error('서버 컴포넌트 Supabase 클라이언트 생성 오류:', error);
     throw error;

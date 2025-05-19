@@ -64,21 +64,10 @@ export const AvatarDropdown = ({ userData }: AvatarDropdownProps) => {
       // 로컬 상태 초기화
       clearUser();
 
-      // 메시지 표시
-      toast({
-        title: '로그아웃 성공',
-        description: '성공적으로 로그아웃되었습니다.',
-      });
-
       // 로그인 페이지로 리디렉션
       router.push('/sign-in');
     } catch (error: any) {
       console.error('로그아웃 오류:', error);
-      toast({
-        variant: 'destructive',
-        title: '로그아웃 실패',
-        description: error.message || '로그아웃 처리 중 오류가 발생했습니다.',
-      });
     } finally {
       setIsSigningOut(false);
     }

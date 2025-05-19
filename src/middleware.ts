@@ -19,6 +19,7 @@ export async function middleware(request: NextRequest) {
 
     // Supabase 클라이언트 생성
     console.log('미들웨어 Supabase 클라이언트 생성');
+    // 미들웨어에서 사용할 쿠키 핸들러
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -26,11 +27,13 @@ export async function middleware(request: NextRequest) {
         cookies: {
           get(name) {
             const cookie = request.cookies.get(name);
-            console.log(`쿠키 조회: ${name} = ${cookie ? '있음' : '없음'}`);
+            if (name.includes('auth') || name.includes('session')) {
+              console.log(`인증 쿠키: ${name}`);
+            }
             return cookie?.value;
           },
           set(name, value, options) {
-            console.log(`쿠키 설정: ${name} = 값 있음`);
+            console.log(`쿠키 설정: ${name}`);
             res.cookies.set({ name, value, ...options });
           },
           remove(name, options) {
