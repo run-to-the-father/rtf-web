@@ -1,4 +1,5 @@
 import { InternalAxiosRequestConfig } from 'axios';
+// fixed: 올바른 경로 사용
 import { COOKIE_KEY } from '@/shared/models/constant/cookie-option';
 
 /** 요청마다 헤더에 토큰을 전송 */
