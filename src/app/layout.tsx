@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
+import { UserProvider } from '@/entities/user/ui/user-provider';
+import { Urbanist } from '@/shared/config/fonts';
 import { cn } from '@/shared/lib/utils';
 import ModalRoot from '@/shared/ui/modal-root';
 import { ToastProvider } from '@/shared/ui/toast';
-import { AuthStateProvider } from '@/application/provider/auth-state-provider';
-import { ThemeProvider } from '@application/provider/theme-provider';
-import { Urbanist } from '@shared/config/fonts';
+import { ThemeProvider } from '@/application/provider/theme-provider';
 import './globals.css';
 
 const baseUrl =
@@ -59,12 +59,12 @@ export default function RootLayout({
           disableTransitionOnChange
           storageKey='rtf-theme'
         >
-          <AuthStateProvider>
-            <ToastProvider>
+          <ToastProvider>
+            <UserProvider>
               <ModalRoot />
               {children}
-            </ToastProvider>
-          </AuthStateProvider>
+            </UserProvider>
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>
