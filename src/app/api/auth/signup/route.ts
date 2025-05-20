@@ -7,6 +7,7 @@ import {
   passwordSchema,
 } from '@/entities/user/model/user-schema';
 import { createServerComponentSupabaseClient } from '@/shared/lib/supabase/server';
+import { getCallbackUrl } from '../../(lib)/utils';
 
 // API 요청 검증을 위한 스키마 (confirmPassword 제외)
 const apiSchema = z.object({
@@ -71,6 +72,10 @@ export async function POST(request: NextRequest) {
       `[${requestId}] ✅ Supabase 클라이언트 생성 완료 (${Date.now() - clientStartTime}ms)`,
     );
 
+    const callbackUrl = getCallbackUrl(request);
+
+    console.log(`[${requestId}] 🔄 콜백 URL: ${callbackUrl}`);
+
     // 1단계 - 회원가입
     console.log(`[${requestId}] 🔄 Supabase Auth 회원가입 시도 중...`);
     const signupStartTime = Date.now();
@@ -78,7 +83,7 @@ export async function POST(request: NextRequest) {
       email,
       password,
       options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
+        emailRedirectTo: callbackUrl,
       },
     });
     console.log(

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
+import { getCallbackUrl } from '../../(lib)/utils';
 
 /**
  * Google 로그인 리디렉션 API
@@ -13,10 +14,8 @@ export async function GET(request: NextRequest) {
     const requestUrl = new URL(request.url);
     console.log('요청 URL:', request.url);
 
-    const callbackUrl = new URL(
-      '/api/auth/callback',
-      requestUrl.origin,
-    ).toString();
+    const callbackUrl = getCallbackUrl(request);
+
     console.log('콜백 URL:', callbackUrl);
 
     // Supabase 클라이언트 생성
