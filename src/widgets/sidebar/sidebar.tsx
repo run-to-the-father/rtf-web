@@ -16,7 +16,7 @@ interface ChatGroup {
   items: ChatItem[];
 }
 
-// 샘플 데이터
+// Sample data
 const chatGroups: ChatGroup[] = [
   {
     title: 'Today',
@@ -24,12 +24,12 @@ const chatGroups: ChatGroup[] = [
       { id: '1', title: 'New conversation', isActive: true, date: 'Today' },
       {
         id: '2',
-        title: '이게 최대 글자수 입니다 Fill container로',
+        title: 'This is the maximum character length for Fill container',
         date: 'Today',
       },
       {
         id: '3',
-        title: 'Fill 247 px * 20 px 아래 최대 글자수입니다',
+        title: 'Maximum character length below Fill 247 px * 20 px',
         date: 'Today',
       },
     ],
@@ -39,28 +39,64 @@ const chatGroups: ChatGroup[] = [
     items: [
       {
         id: '4',
-        title: 'Fill 247 px * 20 px 아래 최대 글자수입니다',
+        title: 'Maximum character length below Fill 247 px * 20 px',
         date: 'Yesterday',
       },
-      { id: '5', title: '질문 완전상세 추가 정보 필요', date: 'Yesterday' },
+      {
+        id: '5',
+        title: 'Question requires additional detailed information',
+        date: 'Yesterday',
+      },
     ],
   },
   {
     title: 'Previous 7 Days',
     items: [
-      { id: '6', title: '질문 완전상세 추가 정보 필요', date: '3 days ago' },
-      { id: '7', title: '질문 완전상세 추가 정보 필요', date: '4 days ago' },
-      { id: '8', title: '질문 완전상세 추가 정보 필요', date: '5 days ago' },
+      {
+        id: '6',
+        title: 'Question requires additional detailed information',
+        date: '3 days ago',
+      },
+      {
+        id: '7',
+        title: 'Question requires additional detailed information',
+        date: '4 days ago',
+      },
+      {
+        id: '8',
+        title: 'Question requires additional detailed information',
+        date: '5 days ago',
+      },
     ],
   },
   {
     title: 'Previous 30 Days',
     items: [
-      { id: '9', title: '질문 완전상세 추가 정보 필요', date: '10 days ago' },
-      { id: '10', title: '질문 완전상세 추가 정보 필요', date: '15 days ago' },
-      { id: '11', title: '질문 완전상세 추가 정보 필요', date: '20 days ago' },
-      { id: '12', title: '질문 완전상세 추가 정보 필요', date: '25 days ago' },
-      { id: '13', title: '질문 완전상세 추가 정보 필요', date: '30 days ago' },
+      {
+        id: '9',
+        title: 'Question requires additional detailed information',
+        date: '10 days ago',
+      },
+      {
+        id: '10',
+        title: 'Question requires additional detailed information',
+        date: '15 days ago',
+      },
+      {
+        id: '11',
+        title: 'Question requires additional detailed information',
+        date: '20 days ago',
+      },
+      {
+        id: '12',
+        title: 'Question requires additional detailed information',
+        date: '25 days ago',
+      },
+      {
+        id: '13',
+        title: 'Question requires additional detailed information',
+        date: '30 days ago',
+      },
     ],
   },
 ];
@@ -68,7 +104,7 @@ const chatGroups: ChatGroup[] = [
 export const Sidebar = () => {
   return (
     <nav className='flex h-full w-full flex-col bg-white'>
-      {/* 검색 헤더 */}
+      {/* Search header */}
       <div className='border-b p-3'>
         <div className='relative'>
           <Input
@@ -90,7 +126,7 @@ export const Sidebar = () => {
         </Button>
       </div>
 
-      {/* 대화 목록 */}
+      {/* Chat list */}
       <div className='flex-1 overflow-y-auto p-1'>
         {chatGroups.map((group) => (
           <div key={group.title} className='mb-2'>
@@ -112,15 +148,15 @@ export const Sidebar = () => {
                   <div className='absolute right-2 top-1/2 flex -translate-y-1/2 opacity-0 group-hover:opacity-100'>
                     <button
                       className='rounded-md p-1 hover:bg-gray-200'
-                      title='수정'
-                      aria-label='대화 제목 편집하기'
+                      title='Edit'
+                      aria-label='Edit chat title'
                     >
                       <Edit className='h-4 w-4 text-gray-500' />
                     </button>
                     <button
                       className='rounded-md p-1 hover:bg-gray-200'
-                      title='삭제'
-                      aria-label='대화 삭제하기'
+                      title='Delete'
+                      aria-label='Delete chat'
                     >
                       <Trash2 className='h-4 w-4 text-gray-500' />
                     </button>

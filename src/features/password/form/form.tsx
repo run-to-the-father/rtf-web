@@ -11,17 +11,17 @@ const ErrorMessage = ({ message }: { message?: string }) => {
   return <p className='mt-1 text-sm text-red-500'>{message}</p>;
 };
 
-interface PasswordForgotFormProps {
+interface ForgotPasswordFormProps {
   email: string;
   onEmailChange: (email: string) => void;
   onSendSuccess: () => void;
 }
 
-export function PasswordForgotForm({
+export function ForgotPasswordForm({
   email,
   onEmailChange,
   onSendSuccess,
-}: PasswordForgotFormProps) {
+}: ForgotPasswordFormProps) {
   const {
     email: emailValue,
     setEmail,

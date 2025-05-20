@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronLeft, Eye, EyeOff } from 'lucide-react';
+import { ChevronLeft, Eye, EyeOff, Mail } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import GoogleIcon from '@/shared/ui/icon/google';
 import { Input } from '@/shared/ui/input';
@@ -24,6 +24,9 @@ export function SignInForm() {
     handleGoogleSignIn,
     handleBackNavigation,
     togglePasswordVisibility,
+    isEmailVerificationNeeded,
+    handleResendVerification,
+    isResendingVerification,
   } = useSignIn();
 
   return (
@@ -42,6 +45,33 @@ export function SignInForm() {
         <h1 className='mb-2 text-3xl font-bold'>Welcome back!</h1>
         <h2 className='text-3xl font-bold'>Glad to see you, Again!</h2>
       </div>
+
+      {isEmailVerificationNeeded ? (
+        <div className='mb-6 rounded-md bg-amber-50 p-4'>
+          <div className='flex items-start space-x-3'>
+            <Mail className='mt-0.5 h-5 w-5 text-amber-800' />
+            <div>
+              <h3 className='font-medium text-amber-800'>
+                Email verification required
+              </h3>
+              <p className='mt-1 text-sm text-amber-700'>
+                Please verify your email address to complete your registration.
+                Check your inbox for the verification link.
+              </p>
+              <Button
+                onClick={handleResendVerification}
+                disabled={isResendingVerification}
+                className='mt-3 bg-amber-600 hover:bg-amber-700'
+                size='sm'
+              >
+                {isResendingVerification
+                  ? 'Sending...'
+                  : 'Resend Verification Email'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <form className='space-y-4' onSubmit={handleSubmit(onSubmit)}>
         <div className='space-y-1'>
@@ -88,7 +118,7 @@ export function SignInForm() {
         <Button
           type='submit'
           className='h-14 w-full rounded-8pxr bg-black text-white'
-          disabled={isLoading}
+          disabled={isLoading || isResendingVerification}
         >
           {isLoading ? 'Loading...' : 'Login'}
         </Button>

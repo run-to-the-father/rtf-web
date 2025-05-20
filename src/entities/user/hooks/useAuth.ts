@@ -12,7 +12,8 @@ import { useUserStore } from '../store/user-store';
 export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const { user, setUser, clearUser, isInitialized } = useUserStore();
+  const { user, setUser, clearUser, isInitialized, isAuthenticated } =
+    useUserStore();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -26,6 +27,28 @@ export const useAuth = () => {
   const isAuthRoute = (path: string) => {
     const authRoutes = ['/login', '/sign-in', '/sign-up', '/register'];
     return authRoutes.some((route) => path === route);
+  };
+
+  // 로그아웃 처리 함수
+  const handleSignOut = async () => {
+    try {
+      console.log('로그아웃 처리 시작');
+
+      // 로컬 상태 초기화
+      clearUser();
+
+      // 서버에 로그아웃 요청
+      await fetch('/api/auth/signout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('로그아웃 처리 완료');
+    } catch (error) {
+      console.error('로그아웃 처리 실패:', error);
+    }
   };
 
   // 컴포넌트 마운트 시 사용자 세션 확인
@@ -48,8 +71,15 @@ export const useAuth = () => {
         const response = await fetch('/api/auth/me');
 
         if (!response.ok) {
-          if (response.status !== 401) {
+          if (response.status === 401) {
+            console.log(
+              '인증되지 않은 상태 (401 Unauthorized), 자동 로그아웃 처리',
+            );
+            // 401 오류 발생 시 자동 로그아웃 처리
+            await handleSignOut();
+          } else {
             console.error('세션 확인 오류:', response.statusText);
+            clearUser();
           }
 
           // 인증되지 않은 상태에서 보호된 경로 접근 시 리디렉션
@@ -58,7 +88,6 @@ export const useAuth = () => {
             router.push('/sign-in');
           }
 
-          clearUser();
           setIsCheckingAuth(false);
           setIsLoading(false);
           return;
@@ -88,6 +117,11 @@ export const useAuth = () => {
       } catch (error) {
         console.error('세션 확인 중 오류 발생:', error);
         clearUser();
+
+        // 오류 발생 시 보호된 경로에서 리디렉션
+        if (isProtectedRoute(pathname)) {
+          router.push('/sign-in');
+        }
       } finally {
         setIsLoading(false);
         setIsCheckingAuth(false);
@@ -95,40 +129,12 @@ export const useAuth = () => {
     };
 
     checkSession();
-  }, [pathname, setUser, clearUser, isInitialized, user, router]);
-
-  // 주기적으로 세션 갱신 (예: 15분마다)
-  useEffect(() => {
-    if (!user) return; // 로그인되지 않은 상태에서는 갱신 불필요
-
-    const refreshSessionInterval = 15 * 60 * 1000; // 15분
-
-    const refreshSession = async () => {
-      try {
-        console.log('세션 갱신 시도 중...');
-        const response = await fetch('/api/auth/session', {
-          method: 'POST',
-        });
-
-        if (!response.ok) {
-          console.log('세션 갱신 실패, 로그아웃 처리');
-          clearUser();
-        }
-      } catch (error) {
-        console.error('세션 갱신 오류:', error);
-      }
-    };
-
-    const intervalId = setInterval(refreshSession, refreshSessionInterval);
-
-    // 컴포넌트 언마운트 시 인터벌 정리
-    return () => clearInterval(intervalId);
-  }, [user, clearUser]);
+  }, [pathname]);
 
   return {
-    user,
-    isAuthenticated: !!user,
     isLoading,
     isCheckingAuth,
+    isAuthenticated,
+    handleSignOut,
   };
 };

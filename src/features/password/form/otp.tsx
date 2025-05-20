@@ -7,29 +7,86 @@ import { Button } from '@/shared/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/shared/ui/input-otp';
 
 interface OTPVerificationProps {
+  email: string;
   onVerifySuccess: () => void;
 }
 
-export function OTPVerification({ onVerifySuccess }: OTPVerificationProps) {
+export function OTPVerification({
+  email,
+  onVerifySuccess,
+}: OTPVerificationProps) {
   const [otp, setOtp] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (otp.length !== 6) return;
+
+    if (otp.length !== 6) {
+      setError('Please enter the complete 6-digit code');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
 
     try {
-      // TODO: Supabase를 사용하여 OTP 인증 로직 구현
-      console.log('OTP 인증:', { otp });
-      // 인증 성공 시 비밀번호 재설정 페이지로 이동
+      // API를 호출하여 OTP 코드 검증
+      const response = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          token: otp,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to verify OTP code');
+      }
+
+      // 인증 성공 시 다음 단계로 이동
       onVerifySuccess();
-    } catch (error) {
+    } catch (error: any) {
       console.error('OTP 인증 오류:', error);
+      setError(error.message || 'Invalid OTP code');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleResendCode = () => {
-    // TODO: Supabase를 사용하여 OTP 코드 재전송 로직 구현
-    console.log('OTP 코드 재전송:');
+  const handleResendCode = async () => {
+    setIsLoading(true);
+    setError('');
+
+    try {
+      // OTP 코드 재전송
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to resend OTP code');
+      }
+
+      // 성공 메시지 표시
+      setError('A new code has been sent to your email');
+    } catch (error: any) {
+      console.error('OTP 코드 재전송 오류:', error);
+      setError(error.message || 'Failed to resend code');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // 입력 필드 렌더링 함수
@@ -58,6 +115,19 @@ export function OTPVerification({ onVerifySuccess }: OTPVerificationProps) {
       </div>
 
       <form onSubmit={handleVerifyOTP} className='space-y-8'>
+        {error && (
+          <div
+            className={cn(
+              'rounded border p-3 text-sm',
+              error.includes('new code')
+                ? 'border-green-200 bg-green-50 text-green-600'
+                : 'border-red-200 bg-red-50 text-red-500',
+            )}
+          >
+            {error}
+          </div>
+        )}
+
         <div className='flex w-full justify-center'>
           <InputOTP
             maxLength={6}
@@ -76,8 +146,9 @@ export function OTPVerification({ onVerifySuccess }: OTPVerificationProps) {
         <Button
           type='submit'
           className='h-14 w-full rounded-8pxr bg-black text-white'
+          disabled={isLoading}
         >
-          Verify
+          {isLoading ? 'Verifying...' : 'Verify'}
         </Button>
       </form>
 
@@ -88,6 +159,7 @@ export function OTPVerification({ onVerifySuccess }: OTPVerificationProps) {
             onClick={handleResendCode}
             type='button'
             className='font-semibold text-black'
+            disabled={isLoading}
           >
             Resend
           </button>

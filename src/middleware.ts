@@ -27,17 +27,12 @@ export async function middleware(request: NextRequest) {
         cookies: {
           get(name) {
             const cookie = request.cookies.get(name);
-            if (name.includes('auth') || name.includes('session')) {
-              console.log(`인증 쿠키: ${name}`);
-            }
             return cookie?.value;
           },
           set(name, value, options) {
-            console.log(`쿠키 설정: ${name}`);
             res.cookies.set({ name, value, ...options });
           },
           remove(name, options) {
-            console.log(`쿠키 삭제: ${name}`);
             res.cookies.delete({ name, ...options });
           },
         },
@@ -56,7 +51,14 @@ export async function middleware(request: NextRequest) {
 
     // 보호된 경로 목록
     const protectedRoutes = ['/chat', '/settings', '/profile'];
-    const authRoutes = ['/login', '/sign-in', '/sign-up', '/register'];
+    const authRoutes = [
+      '/login',
+      '/sign-in',
+      '/sign-up',
+      '/register',
+      '/forgot-password',
+      '/reset-password',
+    ];
 
     // 보호된 경로에 접근하려는 경우 인증 확인
     if (
@@ -98,5 +100,7 @@ export const config = {
     '/sign-in',
     '/sign-up',
     '/register',
+    '/forgot-password',
+    '/reset-password',
   ],
 };
