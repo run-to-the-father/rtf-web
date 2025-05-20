@@ -7,16 +7,16 @@
 export {
   emailSchema,
   passwordSchema,
-  signInSchema,
+  loginSchema,
   signUpSchema,
-  resetPasswordSchema,
+  passwordChangeSchema,
   forgotPasswordSchema,
 } from '../model/user-schema';
 
 // 타입 재내보내기
 export type {
-  SignInFormData,
+  LoginFormData,
   SignUpFormData,
-  ResetPasswordFormData,
+  PasswordChangeFormData,
   ForgotPasswordFormData,
 } from '../model/user-schema';

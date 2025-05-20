@@ -7,8 +7,9 @@ import type { Gender } from './user';
  */
 export const emailSchema = z
   .string()
-  .min(1, { message: '이메일은 필수 입력 항목입니다.' })
-  .email({ message: '유효한 이메일 주소를 입력해주세요.' });
+  .trim()
+  .min(1, { message: 'Email is required.' })
+  .email({ message: 'Please enter a valid email address.' });
 
 /**
  * 비밀번호 유효성 검증 스키마
@@ -16,13 +17,13 @@ export const emailSchema = z
  */
 export const passwordSchema = z
   .string()
-  .min(6, { message: '비밀번호는 최소 6자 이상이어야 합니다.' })
+  .min(6, { message: 'Password must be at least 6 characters.' })
   .regex(/[A-Za-z]/, {
-    message: '비밀번호는 최소 하나의 영문자를 포함해야 합니다.',
+    message: 'Password must contain at least one letter.',
   })
-  .regex(/[0-9]/, { message: '비밀번호는 최소 하나의 숫자를 포함해야 합니다.' })
+  .regex(/[0-9]/, { message: 'Password must contain at least one number.' })
   .regex(/[^A-Za-z0-9]/, {
-    message: '비밀번호는 최소 하나의 특수문자를 포함해야 합니다.',
+    message: 'Password must contain at least one special character.',
   });
 
 /**
@@ -31,18 +32,20 @@ export const passwordSchema = z
  */
 export const nicknameSchema = z
   .string()
-  .min(2, { message: '닉네임은 최소 2자 이상이어야 합니다.' })
-  .max(20, { message: '닉네임은 최대 20자까지 입력 가능합니다.' })
+  .trim()
+  .min(2, { message: 'Nickname must be at least 2 characters.' })
+  .max(20, { message: 'Nickname cannot exceed 20 characters.' })
   .regex(/^[A-Za-z0-9가-힣_]+$/, {
-    message: '닉네임은 영문, 숫자, 한글, 밑줄(_)만 사용 가능합니다.',
+    message:
+      'Nickname can only contain letters, numbers, Korean characters, and underscores (_).',
   });
 
 /**
  * 로그인 유효성 검증 스키마
  */
-export const signInSchema = z.object({
+export const loginSchema = z.object({
   email: emailSchema,
-  password: z.string().min(1, { message: '비밀번호를 입력해주세요.' }),
+  password: z.string().min(1, { message: 'Please enter your password.' }),
 });
 
 /**
@@ -55,28 +58,28 @@ export const signUpSchema = z
     password: passwordSchema,
     confirmPassword: z
       .string()
-      .min(1, { message: '비밀번호 확인을 입력해주세요.' }),
+      .min(1, { message: 'Please confirm your password.' }),
     gender: z.enum(['male', 'female', 'other'], {
-      errorMap: () => ({ message: '성별을 선택해주세요.' }),
+      errorMap: () => ({ message: 'Please select your gender.' }),
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: '비밀번호와 비밀번호 확인이 일치하지 않습니다.',
+    message: 'Passwords do not match.',
     path: ['confirmPassword'],
   });
 
 /**
  * 비밀번호 변경 유효성 검증 스키마
  */
-export const resetPasswordSchema = z
+export const passwordChangeSchema = z
   .object({
     password: passwordSchema,
     confirmPassword: z
       .string()
-      .min(1, { message: '비밀번호 확인을 입력해주세요.' }),
+      .min(1, { message: 'Please confirm your password.' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: '비밀번호와 비밀번호 확인이 일치하지 않습니다.',
+    message: 'Passwords do not match.',
     path: ['confirmPassword'],
   });
 
@@ -87,7 +90,7 @@ export const forgotPasswordSchema = z.object({
   email: emailSchema,
 });
 
-export type SignInFormData = z.infer<typeof signInSchema>;
+export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignUpFormData = z.infer<typeof signUpSchema>;
-export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+export type PasswordChangeFormData = z.infer<typeof passwordChangeSchema>;
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;

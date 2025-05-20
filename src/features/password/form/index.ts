@@ -1,5 +1,5 @@
-export { PasswordForgotForm } from './form';
+export { ForgotPasswordForm } from './form';
 export { OTPVerification } from './otp';
-export { PasswordResetForm } from './reset';
+export { ResetPasswordForm } from './reset';
 export { PasswordChangedSuccess } from './success';
 export * from './use-forgot-password';

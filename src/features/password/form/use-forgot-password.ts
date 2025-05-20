@@ -62,14 +62,28 @@ export function useForgotPassword(
     setIsLoading(true);
 
     try {
-      // TODO: Supabase를 사용하여 OTP 코드 전송 로직 구현
-      console.log('OTP 코드 보내기:', email);
+      // API 호출하여 OTP 코드 전송
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'OTP 코드 전송에 실패했습니다.');
+      }
 
       // 다음 단계로 이동
       onSendSuccess();
-    } catch (error) {
+    } catch (error: any) {
       console.error('OTP 전송 오류:', error);
-      setErrors({ form: 'OTP 코드 전송 중 오류가 발생했습니다.' });
+      setErrors({
+        form: error.message || 'OTP 코드 전송 중 오류가 발생했습니다.',
+      });
     } finally {
       setIsLoading(false);
     }

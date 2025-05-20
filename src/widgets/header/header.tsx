@@ -1,10 +1,12 @@
 'use client';
 
+import Link from 'next/link';
 import type React from 'react';
-import { ChevronDown, PenSquare } from 'lucide-react';
+import { ChevronDown, LogIn, PenSquare } from 'lucide-react';
 import { useAuth } from '@/entities/user/hooks/useAuth';
 import { useUserStore } from '@/entities/user/store/user-store';
 import { Button } from '@/shared/ui/button';
+import { Skeleton } from '@/shared/ui/skeleton';
 import { AvatarDropdown } from '@entities/user/ui/avatar-dropdown';
 
 interface HeaderProps {
@@ -12,15 +14,9 @@ interface HeaderProps {
 }
 
 export const Header = ({ sidebarTrigger }: HeaderProps) => {
-  // useAuth 훅을 사용하여 사용자 정보 가져오기 (로딩 상태는 AvatarDropdown에서 처리)
-  const { user } = useAuth();
-
-  // 로그인된 사용자가 없을 경우 기본값 (개발 및 디자인 테스트용)
-  const fallbackUserData = {
-    name: 'Run to the Father',
-    email: 'runtothefather@gmail.com',
-    avatarFallback: 'RT',
-  };
+  // useAuth에서 인증 상태와 로딩 상태만 가져오기
+  const { isAuthenticated, isLoading } = useAuth();
+  const { user } = useUserStore();
 
   // 로그인된 사용자 정보로 userData 구성
   const userData = user
@@ -29,7 +25,7 @@ export const Header = ({ sidebarTrigger }: HeaderProps) => {
         email: user.email,
         avatarFallback: getInitials(user),
       }
-    : fallbackUserData;
+    : null;
 
   // 이니셜 생성 함수
   function getInitials(user: { nickname?: string; email: string }): string {
@@ -53,7 +49,22 @@ export const Header = ({ sidebarTrigger }: HeaderProps) => {
         <Button variant='ghost' size='icon'>
           <PenSquare className='h-5 w-5' />
         </Button>
-        <AvatarDropdown userData={userData} />
+
+        {isLoading ? (
+          // 로딩 상태일 때 스켈레톤 UI 표시
+          <Skeleton className='h-8 w-8 rounded-full' />
+        ) : isAuthenticated && userData ? (
+          // 인증된 상태일 때 아바타 드롭다운 표시
+          <AvatarDropdown userData={userData} />
+        ) : (
+          // 인증되지 않은 상태일 때 로그인 버튼 표시
+          <Button variant='outline' size='sm' asChild>
+            <Link href='/sign-in'>
+              <LogIn className='mr-2 h-4 w-4' />
+              Sign In
+            </Link>
+          </Button>
+        )}
       </div>
     </header>
   );

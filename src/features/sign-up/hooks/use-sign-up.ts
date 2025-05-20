@@ -51,7 +51,7 @@ export function useSignUp() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || '회원가입에 실패했습니다.');
+        throw new Error(result.message || 'Failed to sign up.');
       }
 
       // 회원가입 성공 - 유저 정보 저장
@@ -61,17 +61,19 @@ export function useSignUp() {
 
       // 회원가입 성공
       toast({
-        title: '회원가입 성공',
-        description: '환영합니다!',
+        title: 'Sign Up Successful',
+        description: 'Please check your email to complete registration.',
       });
 
-      // 메인 페이지로 리디렉션
-      router.push('/');
+      // 이메일 확인 안내 페이지로 리다이렉션 (이메일 주소를 쿼리 파라미터로 전달)
+      router.push(
+        `/email-verification?email=${encodeURIComponent(data.email)}`,
+      );
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: '회원가입 실패',
-        description: error.message || '회원가입 중 오류가 발생했습니다.',
+        title: 'Sign Up Failed',
+        description: error.message || 'An error occurred during sign up.',
       });
     } finally {
       setIsLoading(false);
@@ -86,8 +88,8 @@ export function useSignUp() {
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: 'Google 로그인 실패',
-        description: error.message || 'Google 로그인 중 오류가 발생했습니다.',
+        title: 'Google Login Failed',
+        description: error.message || 'An error occurred during Google login.',
       });
       setIsLoading(false);
     }

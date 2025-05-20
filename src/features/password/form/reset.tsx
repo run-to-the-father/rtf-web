@@ -2,19 +2,21 @@
 
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { passwordChangeSchema } from '@/entities/user';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 
-interface PasswordResetFormProps {
+interface ResetPasswordFormProps {
   onResetSuccess: () => void;
 }
 
-export function PasswordResetForm({ onResetSuccess }: PasswordResetFormProps) {
+export function ResetPasswordForm({ onResetSuccess }: ResetPasswordFormProps) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -24,30 +26,59 @@ export function PasswordResetForm({ onResetSuccess }: PasswordResetFormProps) {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const validateForm = (): boolean => {
     setError('');
 
-    // 비밀번호 유효성 검사
-    if (password.length < 8) {
-      setError('비밀번호는 최소 8자 이상이어야 합니다.');
+    try {
+      // Zod 스키마로 유효성 검증
+      passwordChangeSchema.parse({ password, confirmPassword });
+      return true;
+    } catch (validationError: any) {
+      if (validationError.errors && validationError.errors.length > 0) {
+        setError(validationError.errors[0].message);
+      } else {
+        setError('비밀번호 유효성 검증에 실패했습니다.');
+      }
+      return false;
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // 유효성 검증
+    if (!validateForm()) {
       return;
     }
 
-    // 비밀번호 일치 여부 확인
-    if (password !== confirmPassword) {
-      setError('비밀번호가 일치하지 않습니다.');
-      return;
-    }
+    setIsLoading(true);
 
     try {
-      // TODO: Supabase를 사용하여 비밀번호 재설정 로직 구현
-      console.log('비밀번호 재설정:', { password });
+      // API를 호출하여 비밀번호 업데이트
+      const response = await fetch('/api/auth/update-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          password,
+          confirmPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to reset password');
+      }
+
       // 성공 시 다음 단계로 이동
       onResetSuccess();
-    } catch (error) {
+    } catch (error: any) {
       console.error('비밀번호 재설정 오류:', error);
-      setError('비밀번호 재설정 중 오류가 발생했습니다.');
+      setError(error.message || '비밀번호 재설정 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -69,7 +100,7 @@ export function PasswordResetForm({ onResetSuccess }: PasswordResetFormProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className='bg-secondary h-14 pr-10'
+              className='h-14 bg-secondary pr-10'
             />
             <button
               type='button'
@@ -87,7 +118,7 @@ export function PasswordResetForm({ onResetSuccess }: PasswordResetFormProps) {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className='bg-secondary h-14 pr-10'
+              className='h-14 bg-secondary pr-10'
             />
             <button
               type='button'
@@ -98,14 +129,19 @@ export function PasswordResetForm({ onResetSuccess }: PasswordResetFormProps) {
             </button>
           </div>
 
-          {error && <p className='text-sm text-red-500'>{error}</p>}
+          {error && (
+            <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-500'>
+              {error}
+            </div>
+          )}
         </div>
 
         <Button
           type='submit'
           className='h-14 w-full rounded-8pxr bg-black text-white'
+          disabled={isLoading}
         >
-          Reset Password
+          {isLoading ? 'Updating...' : 'Reset Password'}
         </Button>
       </form>
     </div>

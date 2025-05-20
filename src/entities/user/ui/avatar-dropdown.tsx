@@ -109,7 +109,7 @@ export const AvatarDropdown = ({ userData }: AvatarDropdownProps) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' size='icon' className='rounded-full'>
-            <Avatar className='h-8 w-8'>
+            <Avatar className='h-8 w-8 text-xs'>
               {user?.avatar_url ? (
                 <AvatarImage src={user.avatar_url} alt={displayName} />
               ) : (
@@ -122,9 +122,6 @@ export const AvatarDropdown = ({ userData }: AvatarDropdownProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='w-[200px]'>
           <div className='px-2 py-1.5 text-sm font-medium'>{displayName}</div>
-          <div className='text-muted-foreground px-2 pb-1.5 text-xs'>
-            {user?.email || userData?.email || ''}
-          </div>
           <DropdownMenuItem
             className='flex cursor-pointer items-center gap-2'
             onClick={() => setIsSettingsOpen(true)}
