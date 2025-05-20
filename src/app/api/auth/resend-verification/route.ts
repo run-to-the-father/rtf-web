@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
+import { getCallbackUrl } from '../../(lib)/utils';
 
 /**
  * 이메일 인증 재발송 API
@@ -40,12 +41,14 @@ export async function POST(request: NextRequest) {
       sessionData.session ? '활성' : '비활성',
     );
 
+    const callbackUrl = getCallbackUrl(request);
+
     // 이메일 인증 재발송
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email,
       options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
+        emailRedirectTo: callbackUrl,
       },
     });
 
