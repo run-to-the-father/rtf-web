@@ -50,7 +50,7 @@ export function useForgotPassword(
     }
   };
 
-  // OTP 인증 코드 보내기
+  // 비밀번호 재설정 링크 보내기
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -62,7 +62,7 @@ export function useForgotPassword(
     setIsLoading(true);
 
     try {
-      // API 호출하여 OTP 코드 전송
+      // API 호출하여 재설정 링크 전송
       const response = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: {
@@ -74,15 +74,19 @@ export function useForgotPassword(
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'OTP 코드 전송에 실패했습니다.');
+        throw new Error(
+          data.error || '비밀번호 재설정 이메일 전송에 실패했습니다.',
+        );
       }
 
       // 다음 단계로 이동
       onSendSuccess();
     } catch (error: any) {
-      console.error('OTP 전송 오류:', error);
+      console.error('비밀번호 재설정 이메일 전송 오류:', error);
       setErrors({
-        form: error.message || 'OTP 코드 전송 중 오류가 발생했습니다.',
+        form:
+          error.message ||
+          '비밀번호 재설정 이메일 전송 중 오류가 발생했습니다.',
       });
     } finally {
       setIsLoading(false);

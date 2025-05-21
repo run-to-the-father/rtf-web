@@ -8,9 +8,15 @@ import { Input } from '@/shared/ui/input';
 
 interface ResetPasswordFormProps {
   onResetSuccess: () => void;
+  sessionError?: string | null;
+  hasSession?: boolean;
 }
 
-export function ResetPasswordForm({ onResetSuccess }: ResetPasswordFormProps) {
+export function ResetPasswordForm({
+  onResetSuccess,
+  sessionError,
+  hasSession = true,
+}: ResetPasswordFormProps) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -45,6 +51,15 @@ export function ResetPasswordForm({ onResetSuccess }: ResetPasswordFormProps) {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 세션이 없으면 처리하지 않음
+    if (!hasSession) {
+      setError(
+        sessionError ||
+          '유효한 세션이 없습니다. 이메일의 재설정 링크를 따라 다시 시도해주세요.',
+      );
+      return;
+    }
 
     // 유효성 검증
     if (!validateForm()) {
@@ -101,11 +116,13 @@ export function ResetPasswordForm({ onResetSuccess }: ResetPasswordFormProps) {
               onChange={(e) => setPassword(e.target.value)}
               required
               className='h-14 bg-secondary pr-10'
+              disabled={!hasSession || isLoading}
             />
             <button
               type='button'
               onClick={togglePasswordVisibility}
               className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-500'
+              disabled={!hasSession || isLoading}
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -119,19 +136,21 @@ export function ResetPasswordForm({ onResetSuccess }: ResetPasswordFormProps) {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               className='h-14 bg-secondary pr-10'
+              disabled={!hasSession || isLoading}
             />
             <button
               type='button'
               onClick={toggleConfirmPasswordVisibility}
               className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-500'
+              disabled={!hasSession || isLoading}
             >
               {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
 
-          {error && (
+          {(error || sessionError) && (
             <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-500'>
-              {error}
+              {error || sessionError}
             </div>
           )}
         </div>
@@ -139,7 +158,7 @@ export function ResetPasswordForm({ onResetSuccess }: ResetPasswordFormProps) {
         <Button
           type='submit'
           className='h-14 w-full rounded-8pxr bg-black text-white'
-          disabled={isLoading}
+          disabled={!hasSession || isLoading}
         >
           {isLoading ? 'Updating...' : 'Reset Password'}
         </Button>
