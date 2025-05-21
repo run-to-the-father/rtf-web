@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function EmailVerificationPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <EmailVerificationContainer />;
+      <EmailVerificationContainer />
     </Suspense>
   );
 }

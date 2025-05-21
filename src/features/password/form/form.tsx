@@ -65,7 +65,7 @@ export function ForgotPasswordForm({
           className='h-14 w-full rounded-8pxr bg-black text-white'
           disabled={isLoading}
         >
-          {isLoading ? 'Sending...' : 'Send Code'}
+          {isLoading ? 'Sending...' : 'Send Reset Link'}
         </Button>
       </form>
 

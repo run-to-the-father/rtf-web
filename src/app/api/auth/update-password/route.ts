@@ -4,7 +4,7 @@ import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 
 /**
  * 비밀번호 업데이트 API
- * OTP 인증 후 호출되어 새 비밀번호를 설정합니다.
+ * 비밀번호 재설정 링크를 통해 생성된 세션을 사용하여 새 비밀번호를 설정합니다.
  */
 export async function POST(request: Request) {
   try {
@@ -32,22 +32,33 @@ export async function POST(request: Request) {
     const { data: sessionData, error: sessionError } =
       await supabase.auth.getSession();
 
-    if (sessionError || !sessionData.session) {
+    if (sessionError) {
+      console.error('Session error:', sessionError);
       return NextResponse.json(
-        { error: 'No active session found. Please verify OTP first.' },
+        { error: sessionError.message },
+        { status: 401 },
+      );
+    }
+
+    if (!sessionData.session) {
+      return NextResponse.json(
+        {
+          error:
+            'No active session found. Please follow the reset link from your email.',
+        },
         { status: 401 },
       );
     }
 
     // 비밀번호 업데이트
-    const { error } = await supabase.auth.updateUser({
+    const { data, error } = await supabase.auth.updateUser({
       password,
     });
 
     if (error) {
       console.error('Failed to update password:', error);
       return NextResponse.json(
-        { error: 'Failed to update password' },
+        { error: error.message || 'Failed to update password' },
         { status: 500 },
       );
     }
@@ -56,11 +67,12 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       message: 'Password updated successfully',
+      user: data.user,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Password update failed:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: error.message || 'Internal server error' },
       { status: 500 },
     );
   }
